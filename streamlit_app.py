@@ -16,7 +16,6 @@ def load_data():
     return hpa_df
 
 df = load_data()
-### P1.2 ###
 
 st.write("## GCapricorn - A Data Visualization Project")
 
@@ -45,8 +44,8 @@ st.write("## GCapricorn - A Data Visualization Project")
 # ### P2.3 ###
 
 # ### P2.4 ###
-# cancer = st.selectbox(label="Cancer", options=df["Cancer"].unique(), index=0)
-# subset = subset[subset["Cancer"] == cancer]
+cancer = st.selectbox(label="Cancer", options=df["pathology"].unique(), index=0)
+#subset = subset[subset["Cancer"] == cancer]
 # ### P2.4 ###
 
 # ### P2.5 ###
