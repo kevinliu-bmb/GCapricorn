@@ -3,18 +3,18 @@ import pandas as pd
 import streamlit as st
 
 @st.cache
-# def load_data():
-#     hpa_df = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
-#     nonPathology_id_vars = [col for col in hpa_df.columns if col.startswith('Pathology prognostics') == False]
-#     hpa_df = hpa_df.melt(id_vars=nonPathology_id_vars, var_name="pathology", value_name="prognostic")
-#     nonBloodConc_id_vars = [col for col in hpa_df.columns if col.startswith('Blood concentration') == False]
-#     hpa_df = hpa_df.melt(id_vars=nonBloodConc_id_vars, var_name="bloodConcType", value_name="bloodConc")
-#     nonExpressionCluster_id_vars = [col for col in hpa_df.columns if col.endswith('expression cluster') == False]
-#     hpa_df = hpa_df.melt(id_vars=nonExpressionCluster_id_vars, var_name="expressionClusterType", value_name="expressionCluster")
+def load_data():
+    hpa_df = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
+    # nonPathology_id_vars = [col for col in hpa_df.columns if col.startswith('Pathology prognostics') == False]
+    # hpa_df = hpa_df.melt(id_vars=nonPathology_id_vars, var_name="pathology", value_name="prognostic")
+    # nonBloodConc_id_vars = [col for col in hpa_df.columns if col.startswith('Blood concentration') == False]
+    # hpa_df = hpa_df.melt(id_vars=nonBloodConc_id_vars, var_name="bloodConcType", value_name="bloodConc")
+    # nonExpressionCluster_id_vars = [col for col in hpa_df.columns if col.endswith('expression cluster') == False]
+    # hpa_df = hpa_df.melt(id_vars=nonExpressionCluster_id_vars, var_name="expressionClusterType", value_name="expressionCluster")
     
-#     return hpa_df
+    return hpa_df
 
-# df = load_data()
+df = load_data()
 
 st.write("## GCapricorn - A Data Visualization Project")
 
