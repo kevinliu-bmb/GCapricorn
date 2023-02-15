@@ -43,7 +43,7 @@ st.write("## GCapricorn - A Data Visualization Project")
 # ### P2.3 ###
 
 # ### P2.4 ###
-cancer = st.selectbox(label="Cancer", options=df["pathology"].unique(), index=0)
+#cancer = st.selectbox(label="Cancer", options=df["pathology"].unique(), index=0)
 #subset = subset[subset["Cancer"] == cancer]
 # ### P2.4 ###
 
