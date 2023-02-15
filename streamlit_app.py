@@ -21,7 +21,8 @@ st.write("## GCapricorn - A Data Visualization Project")
 chart = alt.Chart(df).mark_circle().encode(
     x='Gene:N',
     y='Blood concentration - Conc. blood MS [pg/L]:Q',
-    color='Chromosome:N'
+    color='Chromosome:N',
+    size='Blood concentration - Conc. blood IM [pg/L]:Q',
 ).interactive()
 st.altair_chart(chart, use_container_width=True)
 
