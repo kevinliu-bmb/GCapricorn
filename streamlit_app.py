@@ -18,6 +18,13 @@ df = load_data()
 
 st.write("## GCapricorn - A Data Visualization Project")
 
+chart = alt.Chart(df).mark_circle().encode(
+    x='Gene:N',
+    y='Blood concentration - Conc. blood MS [pg/L]:Q',
+    color='Chromosome:N'
+).interactive()
+st.altair_chart(chart, use_container_width=True)
+
 # ### P2.1 ###
 # year = st.slider(label="Year", min_value=min(df["Year"]), max_value=max(df["Year"]), value=2012)
 # subset = df[df["Year"] == year]
