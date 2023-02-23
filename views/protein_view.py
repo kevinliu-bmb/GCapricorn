@@ -1,6 +1,7 @@
 import gzip
 import json
 import os
+from typing import Optional
 
 import py3Dmol
 import requests
@@ -19,7 +20,7 @@ def load_protein_sequence(protein_id: str) -> str:
     return ''.join(fasta_string.split('\n')[1:])
 
 @st.cache_data
-def load_protein_structures(sequence: str) -> dict[str, dict[str, str]] | None:
+def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, str]]]:
     """
     Retrieve protein structures from a protein sequence. Uses the PDB API in order to obtain PDB entries that match
     the provided sequence.
