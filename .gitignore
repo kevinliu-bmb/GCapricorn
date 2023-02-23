@@ -1,3 +1,2 @@
-views/__pycache__/cancer_view.cpython-39.pyc
-views/__pycache__/chromosome_view.cpython-39.pyc
-views/__pycache__/protein_view.cpython-39.pyc
+.idea/
+__pycache__/
