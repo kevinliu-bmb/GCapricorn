@@ -89,7 +89,7 @@ def generate_protein_view() -> None:
 
     uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
     seq = load_protein_sequence(uniprot_id)
-    st.write(seq)
+    st.text_area("Amino Acid Sequence", seq)
 
     structures = load_protein_structures(seq)
     if structures is not None:
