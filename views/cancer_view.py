@@ -2,7 +2,7 @@ import altair as alt
 import streamlit as st
 
 def generate_cancer_view() -> None:
-    st.write("View1")
+    st.title("View 1 - Global View of Cancer Statistics")
 
     df = st.session_state["data"]
 
