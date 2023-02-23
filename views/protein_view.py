@@ -7,7 +7,7 @@ import py3Dmol
 import streamlit as st
 import streamlit.components.v1 as components
 
-@st.cache
+@st.cache_data
 def load_protein_sequence(protein_id: str) -> str:
     """
     Retrieve amino acid sequence in one-letter codes from the UniProt database.
@@ -17,7 +17,7 @@ def load_protein_sequence(protein_id: str) -> str:
     fasta_string: str = requests.get(f"https://www.uniprot.org/uniprot/{protein_id}.fasta").text
     return ''.join(fasta_string.split('\n')[1:])
 
-@st.cache
+@st.cache_data
 def load_protein_structures(sequence: str) -> dict[str, dict[str, str]] | None:
     """
     Retrieve protein structures from a protein sequence. Uses the PDB API in order to obtain PDB entries that match

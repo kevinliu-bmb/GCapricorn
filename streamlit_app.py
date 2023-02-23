@@ -10,7 +10,7 @@ site_configuration = {
     "layout": "wide"
 }
 
-@st.cache
+@st.cache_data
 def load_data() -> pd.DataFrame:
     """
     Load the Human Protein Atlas (HPA) DataFrame and prepare the data.
