@@ -65,7 +65,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     :param string_format: format of the protein. Default format is PDB.
     :return: None.
     """
-    visualization_type = st.selectbox("Type", options=["cartoon", "stick", "sphere"],
+    visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                       format_func=lambda x: f"{x.title()} model")
 
     viewer = py3Dmol.view(width=600, height=400)
