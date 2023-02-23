@@ -75,7 +75,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     else:
         viewer.addModel(molecule, string_format)
     viewer.setStyle({visualization_type: {"color": "spectrum"}})
-    viewer.zoomTo()
+    #viewer.zoomTo()
     components.html(viewer._make_html(), width=600, height=400)
 
 def generate_protein_view() -> None:
