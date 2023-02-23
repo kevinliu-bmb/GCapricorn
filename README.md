@@ -1,6 +1,6 @@
 # GCapricorn
 
-**This data visualization project is completed for the BMI706 - Data Visualization for Biomedical Applications course**
+*This data visualization project is completed for the BMI706 - Data Visualization for Biomedical Applications course.*
 
 GCapricorn is an app that helps cancer researchers investigate cancer-related proteins.
 
