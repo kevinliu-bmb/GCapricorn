@@ -94,12 +94,8 @@ def generate_protein_view() -> None:
     structures = load_protein_structures(seq)
     if structures is not None:
         structure_selector = st.radio(f"Structure matches for UniProt ID {uniprot_id}", options=structures.keys(), horizontal=True,
-                                      format_func=lambda x: f"{x} - Score: {structures[x]['score']:.2f}")
+                                      format_func=lambda x: f"{x} - Sequence Match Score: {structures[x]['score']:.2f}")
         render_py3DMol(structures[structure_selector]["structure"])
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
-
-    # Also hardcoded for now. If you want to try your own, download from PDB database.
-    #molecule_path = "/home/diego/Universidad/Harvard/Capstone/PDBBind/PDBBind_processed/1azx/1azx_protein_processed.pdb"
-    #render_py3DMol(molecule_path)
 
