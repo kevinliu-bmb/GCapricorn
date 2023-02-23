@@ -87,7 +87,7 @@ def generate_protein_view() -> None:
     data = st.session_state["data"]
     st.header("Protein Details")
 
-    uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
+    uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique(), default=None)
     seq = load_protein_sequence(uniprot_id)
     seq_chunks = " ".join([seq[i:i+10] for i in range(0, len(seq), 10)])
     st.text_area("Amino Acid Sequence", seq_chunks)
