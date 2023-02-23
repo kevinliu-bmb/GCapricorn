@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+
 from views.cancer_view import generate_cancer_view
 from views.chromosome_view import generate_chromosome_view
 from views.protein_view import generate_protein_view
@@ -17,6 +18,7 @@ def load_data() -> pd.DataFrame:
     :return: the tidy DataFrame containing HPA data
     """
     hpa_df = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
+    # TODO: Tidy DataFrame
     return hpa_df
 
 def main():

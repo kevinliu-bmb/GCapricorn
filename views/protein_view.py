@@ -2,10 +2,11 @@ import gzip
 import json
 import os
 
-import requests
 import py3Dmol
+import requests
 import streamlit as st
 import streamlit.components.v1 as components
+
 
 @st.cache_data
 def load_protein_sequence(protein_id: str) -> str:
