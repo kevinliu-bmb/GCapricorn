@@ -1,14 +1,19 @@
 # GCapricorn
 
+**This data visualization project is completed for the BMI706 - Data Visualization for Biomedical Applications course**
+
 GCapricorn is an app that helps cancer researchers investigate cancer-related proteins.
+
+Biomedical researchers, clinicians, and genetic counselors in the oncology field. Our application will allow researchers and clinicians to explore cancer-related proteins from the clinical level to the amino acid and nucleotide level.
 
 Link to Streamlit app: [https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/]
 
 ## Team Members
 
-* Kevin Liu
-* Diego Trujillo
-* Michelle Theodory
+Team Runtime Terror
+* Kevin Liu [https://github.com/kevinliu-bmb]
+* Diego Trujillo [https://github.com/dietrujillo]
+* Michelle Theodory [https://github.com/mtheodory]
 
 ## Project Description
 ### View 1
