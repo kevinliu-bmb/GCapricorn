@@ -1,3 +1,4 @@
+import gzip
 import json
 import os
 
@@ -16,9 +17,15 @@ def load_protein_sequence(protein_id: str) -> str:
     fasta_string: str = requests.get(f"https://www.uniprot.org/uniprot/{protein_id}.fasta").text
     return ''.join(fasta_string.split('\n')[1:])
 
-#@st.cache
-def load_protein_structure(sequence: str) -> str:
-    # TODO: this is still under construction
+@st.cache
+def load_protein_structures(sequence: str) -> dict[str, dict[str, str]] | None:
+    """
+    Retrieve protein structures from a protein sequence. Uses the PDB API in order to obtain PDB entries that match
+    the provided sequence.
+    :param sequence: The protein sequence as a string of 1-letter amino acids.
+    :return: A dictionary containing the PDB ID as a key and PDB structure and score as values. The score is a numeric
+    value from 0 to 1 representing the sequence match.
+    """
     query = {
         "query": {
             "type": "terminal",
@@ -34,11 +41,20 @@ def load_protein_structure(sequence: str) -> str:
         "return_type": "entry"
     }
 
-    pdb_id = requests.get(f"https://search.rcsb.org/rcsbsearch/v2/", params=query).text
-    st.write(pdb_id, type(pdb_id), f"https://search.rcsb.org/rcsbsearch/v2/query?json={json.dumps(query, separators=(',', ':'))}")
-    #result = requests.get(f"https://files.rcsb.org/download/{pdb_id}.pdb.gz").text
-    #return gzip.decompress(result.encode()).decode()
-    return pdb_id
+    try:
+        pdb_response = json.loads(requests.get(
+            f"https://search.rcsb.org/rcsbsearch/v2/query?json={json.dumps(query, separators=(',', ':'))}").text
+        )
+    except json.JSONDecodeError:
+        return None
+
+    structures = {}
+    for pdb_result in pdb_response["result_set"]:
+        pdb_id = pdb_result["identifier"]
+        score = pdb_result["score"]
+        structure = requests.get(f"https://files.rcsb.org/download/{pdb_id}.pdb.gz").content
+        structures[pdb_id] = {"score": score, "structure": gzip.decompress(structure).decode()}
+    return structures
 
 def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     """
@@ -50,7 +66,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     visualization_type = st.selectbox("Type", options=["cartoon", "stick", "sphere"],
                                       format_func=lambda x: f"{x.title()} model")
 
-    viewer = py3Dmol.view(width=400, height=400)
+    viewer = py3Dmol.view(width=600, height=400)
     if os.path.exists(molecule):
         with open(molecule, "r") as file:
             viewer.addModel(file.read(), string_format)
@@ -58,7 +74,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
         viewer.addModel(molecule, string_format)
     viewer.setStyle({visualization_type: {"color": "spectrum"}})
     viewer.zoomTo()
-    components.html(viewer._make_html(), height=400, width=400)
+    components.html(viewer._make_html(), width=600, height=400)
 
 def generate_protein_view() -> None:
     """
@@ -66,15 +82,22 @@ def generate_protein_view() -> None:
     :return: None
     """
 
+    data = st.session_state["data"]
     st.title("View3")
 
-    molecule_id = "O43657"  # Hardcoded for now
-    seq = load_protein_sequence(molecule_id)
+    uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
+    seq = load_protein_sequence(uniprot_id)
     st.write(seq)
 
-    load_protein_structure(seq)
+    structures = load_protein_structures(seq)
+    if structures is not None:
+        structure_selector = st.radio(f"Structure matches for UniProt ID {uniprot_id}", options=structures.keys(), horizontal=True,
+                                      format_func=lambda x: f"{x} - Score: {structures[x]['score']:.2f}")
+        render_py3DMol(structures[structure_selector]["structure"])
+    else:
+        st.write(f"No structure found for UniProt ID {uniprot_id}")
 
     # Also hardcoded for now. If you want to try your own, download from PDB database.
-    molecule_path = "/home/diego/Universidad/Harvard/Capstone/PDBBind/PDBBind_processed/1azx/1azx_protein_processed.pdb"
-    render_py3DMol(molecule_path)
+    #molecule_path = "/home/diego/Universidad/Harvard/Capstone/PDBBind/PDBBind_processed/1azx/1azx_protein_processed.pdb"
+    #render_py3DMol(molecule_path)
 
