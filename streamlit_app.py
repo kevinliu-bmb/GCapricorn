@@ -25,7 +25,7 @@ def main():
 
     st.set_page_config(**site_configuration)
 
-    st.write("## GCapricorn - A Data Visualization Project")
+    st.title("GCapricorn")
 
 
     df = load_data()

@@ -85,7 +85,7 @@ def generate_protein_view() -> None:
     """
 
     data = st.session_state["data"]
-    st.header("View 3 - Protein Details")
+    st.header("Protein Details")
 
     uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
     seq = load_protein_sequence(uniprot_id)
