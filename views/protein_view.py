@@ -92,8 +92,11 @@ def generate_protein_view() -> None:
 
     uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
     seq = load_protein_sequence(uniprot_id)
+
+    # chunk the sequence into tab-separated 10 amino acids
     seq_chunks = "\t".join([seq[i:i+10] for i in range(0, len(seq), 10)])
     
+    # Add a new line every 5 sequences chunks
     tab_count = 0
     seq_chunked = ""
     for char in seq_chunks:
