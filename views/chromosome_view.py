@@ -13,11 +13,10 @@ def generate_chromosome_view() -> None:
 
     # Create chromosome selection widget.
     chromosome_select = st.selectbox(label="Chromosome", options=chromosome_names, index=0)
-
+    chromosome_select = chromosome_select.split(" ")[-1]
     
-
     # Filter the data to only include the selected chromosome.
-    chromosome_df = df[df["Chromosome"] == chromosome_select[-1:]]
+    chromosome_df = df[df["Chromosome"] == chromosome_select]
 
     # Place holder for the chromosome visualization.
     chart = alt.Chart(chromosome_df).mark_bar().encode(
