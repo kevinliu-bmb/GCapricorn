@@ -5,11 +5,13 @@ from views.cancer_view import generate_cancer_view
 from views.chromosome_view import generate_chromosome_view
 from views.protein_view import generate_protein_view
 
+
 site_configuration = {
     "page_title": "GCapricorn",
     "page_icon": "res/favicon.ico",
     "layout": "wide"
 }
+
 
 @st.cache_data
 def load_data() -> pd.DataFrame:
@@ -20,6 +22,7 @@ def load_data() -> pd.DataFrame:
     hpa_df = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
     # TODO: Tidy DataFrame
     return hpa_df
+
 
 def main():
 
@@ -44,6 +47,7 @@ def main():
 
     with view3:
         generate_protein_view()
+
 
 if __name__ == '__main__':
     main()

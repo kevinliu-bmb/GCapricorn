@@ -1,7 +1,7 @@
 import gzip
 import json
 import os
-from typing import Optional
+from typing import Optional, Union
 
 import py3Dmol
 import requests
@@ -17,16 +17,17 @@ def load_protein_sequence(protein_id: str) -> str:
     :return: The protein sequence as a string of amino acids.
     """
     fasta_string: str = requests.get(f"https://www.uniprot.org/uniprot/{protein_id}.fasta").text
-    return ''.join(fasta_string.split('\n')[1:])
+    return "".join([x.strip() for x in fasta_string.split("\n")[1:]])
+
 
 @st.cache_data
-def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, str]]]:
+def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union[str, int]]]]:
     """
     Retrieve protein structures from a protein sequence. Uses the PDB API in order to obtain PDB entries that match
     the provided sequence.
     :param sequence: The protein sequence as a string of 1-letter amino acids.
-    :return: A dictionary containing the PDB ID as a key and PDB structure and score as values. The score is a numeric
-    value from 0 to 1 representing the sequence match.
+    :return: A dictionary containing the PDB ID as a key another dictionary with PDB structure and score as values.
+    The score is a numeric value from 0 to 1 representing the sequence match.
     """
     query = {
         "query": {
@@ -58,6 +59,7 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, str]]
         structures[pdb_id] = {"score": score, "structure": gzip.decompress(structure).decode()}
     return structures
 
+
 def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     """
     Render the molecule using the Py3DMol API.
@@ -78,6 +80,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     viewer.zoomTo()
     components.html(viewer._make_html(), width=600, height=400)
 
+
 def generate_protein_view() -> None:
     """
     Generate the protein details view using the Streamlit API.
@@ -92,14 +95,11 @@ def generate_protein_view() -> None:
     st.write(seq)
 
     structures = load_protein_structures(seq)
-    if structures is not None:
-        structure_selector = st.radio(f"Structure matches for UniProt ID {uniprot_id}", options=structures.keys(), horizontal=True,
-                                      format_func=lambda x: f"{x} - Score: {structures[x]['score']:.2f}")
+    matched_structures = {k: v for k, v in structures.items() if v["score"] > 0.0}
+    if matched_structures is not None:
+        structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
+                                      options=matched_structures.keys(), horizontal=True,
+                                      format_func=lambda x: f"{x} - Match: {matched_structures[x]['score'] * 100:.2f}%")
         render_py3DMol(structures[structure_selector]["structure"])
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
-
-    # Also hardcoded for now. If you want to try your own, download from PDB database.
-    #molecule_path = "/home/diego/Universidad/Harvard/Capstone/PDBBind/PDBBind_processed/1azx/1azx_protein_processed.pdb"
-    #render_py3DMol(molecule_path)
-

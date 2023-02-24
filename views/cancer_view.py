@@ -1,6 +1,7 @@
 import altair as alt
 import streamlit as st
 
+
 def generate_cancer_view() -> None:
     st.write("View1")
 
