@@ -8,8 +8,6 @@ Biomedical researchers, clinicians, and genetic counselors in the oncology field
 
 Link to Streamlit app: https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/
 
-Link to Kevin's branch: https://kevinliu-bmb-bmi706-runtime-terror-gcapri-streamlit-app-w2p6xl.streamlit.app/
-
 ## Team Members
 
 Team Runtime Terror
