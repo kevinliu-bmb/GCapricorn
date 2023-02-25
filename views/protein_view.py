@@ -20,6 +20,30 @@ def load_protein_sequence(protein_id: str) -> str:
     return "".join([x.strip() for x in fasta_string.split("\n")[1:]])
 
 
+def generate_protein_info_view(uniprot_id: str) -> None:
+    """
+    The left part of the protein details, containing protein data and a sequence visualization.
+    :param uniprot_id: The UniProt ID of the protein to visualize.
+    :return: None.
+    """
+    seq = load_protein_sequence(uniprot_id)
+
+    # chunk the sequence into tab-separated 10 amino acids
+    seq_chunks = "\t".join([seq[i:i + 10] for i in range(0, len(seq), 10)])
+
+    # Add a new line every 5 sequences chunks
+    tab_count = 0
+    seq_chunked = ""
+    for char in seq_chunks:
+        seq_chunked += char
+        if char == "\t":
+            tab_count += 1
+            if tab_count % 5 == 0:
+                seq_chunked += "\n"
+
+    st.text_area("Amino Acid Sequence", seq_chunked)
+
+
 @st.cache_data
 def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union[str, int]]]]:
     """
@@ -44,14 +68,15 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union
         "return_type": "entry"
     }
 
+    structures = {}
+
     try:
         pdb_response = json.loads(requests.get(
             f"https://search.rcsb.org/rcsbsearch/v2/query?json={json.dumps(query, separators=(',', ':'))}").text
         )
     except json.JSONDecodeError:
-        return None
+        return structures
 
-    structures = {}
     for pdb_result in pdb_response["result_set"]:
         pdb_id = pdb_result["identifier"]
         score = pdb_result["score"]
@@ -81,6 +106,27 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     components.html(viewer._make_html(), width=600, height=400)
 
 
+def generate_protein_structure_view(uniprot_id: str) -> None:
+    """
+    The right part of the protein details, containing structural information and a 3D molecule visualization.
+    :param uniprot_id: The UniProt ID of the protein to visualize.
+    :return: None.
+    """
+    seq = load_protein_sequence(uniprot_id)
+    structures = load_protein_structures(seq)
+
+    matched_structures = {k: v for k, v in structures.items() if v["score"] > 0.0}
+
+    if len(matched_structures) > 0:
+        structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
+                                      options=matched_structures.keys(), horizontal=True,
+                                      format_func=lambda
+                                          x: f"{x} - Sequence Match: {matched_structures[x]['score'] * 100:.2f}%")
+        render_py3DMol(structures[structure_selector]["structure"])
+    else:
+        st.write(f"No structure found for UniProt ID {uniprot_id}")
+
+
 def generate_protein_view() -> None:
     """
     Generate the protein details view using the Streamlit API.
@@ -88,34 +134,15 @@ def generate_protein_view() -> None:
     """
 
     data = st.session_state["data"]
+
     st.header("Protein Details")
 
     uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
-    seq = load_protein_sequence(uniprot_id)
 
-    # chunk the sequence into tab-separated 10 amino acids
-    seq_chunks = "\t".join([seq[i:i+10] for i in range(0, len(seq), 10)])
-    
-    # Add a new line every 5 sequences chunks
-    tab_count = 0
-    seq_chunked = ""
-    for char in seq_chunks:
-        seq_chunked += char
-        if char == "\t":
-            tab_count += 1
-            if tab_count % 5 == 0:
-                seq_chunked += "\n"
+    info_view, structure_view = st.columns(2)
 
-    st.text_area("Amino Acid Sequence", seq_chunked)
+    with info_view:
+        generate_protein_info_view(uniprot_id)
 
-    structures = load_protein_structures(seq)
-    
-    matched_structures = {k: v for k, v in structures.items() if v["score"] > 0.0}
-    
-    if matched_structures is not None:
-        structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
-                                      options=matched_structures.keys(), horizontal=True,
-                                      format_func=lambda x: f"{x} - Sequence Match: {matched_structures[x]['score'] * 100:.2f}%")
-        render_py3DMol(structures[structure_selector]["structure"])
-    else:
-        st.write(f"No structure found for UniProt ID {uniprot_id}")
+    with structure_view:
+        generate_protein_structure_view(uniprot_id)
