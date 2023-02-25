@@ -52,10 +52,10 @@ def main():
     st.session_state["unfiltered_data"] = data
     st.session_state["data"] = data
 
-    # 2 + 1 layout
-    left_panel, view3 = st.columns(2)
-    view1 = left_panel.container()
-    view2 = left_panel.container()
+    # Horizontal 2 + 1 layout
+    top_panel = st.container()
+    view1, view2 = top_panel.columns(2)
+    view3 = st.container()
 
     with view1:
         generate_cancer_view()
