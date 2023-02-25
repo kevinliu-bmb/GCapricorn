@@ -6,7 +6,7 @@ GCapricorn is an app that helps cancer researchers investigate cancer-related pr
 
 Biomedical researchers, clinicians, and genetic counselors in the oncology field. Our application will allow researchers and clinicians to explore cancer-related proteins from the clinical level to the amino acid and nucleotide level.
 
-[Access GCapricorn](https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/)
+[![Access GCapricorn]](https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/)
 
 ## Team Members
 
