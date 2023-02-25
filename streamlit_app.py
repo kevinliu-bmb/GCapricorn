@@ -19,9 +19,9 @@ def load_data() -> pd.DataFrame:
     Load the Human Protein Atlas (HPA) DataFrame and prepare the data.
     :return: the tidy DataFrame containing HPA data
     """
-    hpa_df = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
+    data = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
     # TODO: Tidy DataFrame
-    return hpa_df
+    return data
 
 
 def main():
