@@ -13,6 +13,21 @@ site_configuration = {
 }
 
 
+def generate_prognostic_data(row: pd.Series, prognostic_type: str) -> str:
+    """
+    Generate a prognostics value for a given protein.
+    :param row: A Human Protein Atlas entry. Must contain prognostics information in different cancer columns.
+    :param prognostic_type: one of "favorable" or "unfavorable".
+    :return: A comma-separated string containing all the cancer types for
+    which the protein has a prognostic_type prognostic.
+    """
+    prognostic_fields = row[pd.Series(row.index).apply(lambda x: "Pathology prognostics" in x).values]
+    prognostics_row = row[prognostic_fields.index]
+    prognostics = prognostics_row[prognostics_row.apply(lambda x: prognostic_type in str(x).lower().split())].index
+    return ",".join(map(lambda x: x.split("-")[1].strip(), prognostics))
+
+
+
 @st.cache_data
 def load_data() -> pd.DataFrame:
     """
@@ -20,7 +35,9 @@ def load_data() -> pd.DataFrame:
     :return: the tidy DataFrame containing HPA data
     """
     data = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
-    # TODO: Tidy DataFrame
+    data["Favorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="favorable"), axis=1)
+    data["Unfavorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="unfavorable"), axis=1)
+
     return data
 
 
@@ -31,8 +48,9 @@ def main():
     st.title("GCapricorn")
 
 
-    df = load_data()
-    st.session_state["data"] = df
+    data = load_data()
+    st.session_state["unfiltered_data"] = data
+    st.session_state["data"] = data
 
     # 2 + 1 layout
     left_panel, view3 = st.columns(2)

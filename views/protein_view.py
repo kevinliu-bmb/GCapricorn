@@ -119,4 +119,3 @@ def generate_protein_view() -> None:
         render_py3DMol(structures[structure_selector]["structure"])
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
-
