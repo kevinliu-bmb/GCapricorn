@@ -44,12 +44,15 @@ def generate_chromosome_view() -> None:
         min_start = chr_pos[0].astype(int).min()
         max_end = chr_pos[1].astype(int).max()
 
+        # Create a list of chromosome positions based on the minimal start position and maximal end position.
+        chromosome_positions = [i for i in range(min_start, max_end, 1000)]
+
         chart = alt.Chart(df_chromosome_filt).mark_bar().encode(
             x=alt.X('Chromosome:N'),
             y=alt.Y('count(Gene):Q'),
             color=alt.Color('Chromosome:N')
         ) & alt.Chart(df_chromosome_filt).mark_bar().encode(
-            x=alt.X('Chromosome:N'),
+            x=alt.X(chromosome_positions, title='Position'),
             y=alt.Y('count(Gene):Q'),
             color=alt.Color('Chromosome:N')
         )       
