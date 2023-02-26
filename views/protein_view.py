@@ -1,8 +1,10 @@
 import gzip
 import json
 import os
+import re
 from typing import Optional, Union
 
+import pandas as pd
 import py3Dmol
 import requests
 import streamlit as st
@@ -20,28 +22,29 @@ def load_protein_sequence(protein_id: str) -> str:
     return "".join([x.strip() for x in fasta_string.split("\n")[1:]])
 
 
-def generate_protein_info_view(uniprot_id: str) -> None:
+def generate_protein_info_view(uniprot_id: str, data: pd.DataFrame) -> None:
     """
     The left part of the protein details, containing protein data and a sequence visualization.
     :param uniprot_id: The UniProt ID of the protein to visualize.
+    :param data: The DataFrame object containing protein information.
     :return: None.
     """
+
+    protein_info = data[data["Uniprot"] == uniprot_id]
+    assert len(protein_info) == 1
+    protein_info = protein_info.iloc[0]
+
+    gene_col, _ = st.columns(2)
+    gene_col.metric("Gene", protein_info["Gene"])
+
+    gene_synonym_col, ensemble_id_col = st.columns(2)
+    gene_synonym_col.metric("Gene synonyms", protein_info["Gene synonym"])
+    ensemble_id_col.metric("Ensembl ID", protein_info["Ensembl"])
+
     seq = load_protein_sequence(uniprot_id)
-
-    # chunk the sequence into tab-separated 10 amino acids
-    seq_chunks = "\t".join([seq[i:i + 10] for i in range(0, len(seq), 10)])
-
-    # Add a new line every 5 sequences chunks
-    tab_count = 0
-    seq_chunked = ""
-    for char in seq_chunks:
-        seq_chunked += char
-        if char == "\t":
-            tab_count += 1
-            if tab_count % 5 == 0:
-                seq_chunked += "\n"
-
-    st.text_area("Amino Acid Sequence", seq_chunked)
+    seq = re.sub(r"(\w{10})", r"\1 ", seq)
+    st.write("Amino Acid Sequence")
+    st.info(seq)
 
 
 @st.cache_data
@@ -103,7 +106,8 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     else:
         viewer.addModel(molecule, string_format)
 
-    viewer.setStyle({visualization_type: {"color": "spectrum"}})
+    viewer.setStyle({visualization_type: {"colorscheme": "amino"}})
+
     viewer.setHoverable({}, True,
     f"""
     // On hover function
@@ -164,7 +168,7 @@ def generate_protein_view() -> None:
     info_view, structure_view = st.columns(2)
 
     with info_view:
-        generate_protein_info_view(uniprot_id)
+        generate_protein_info_view(uniprot_id, data)
 
     with structure_view:
         generate_protein_structure_view(uniprot_id)
