@@ -12,6 +12,9 @@ site_configuration = {
     "layout": "wide"
 }
 
+with open("stylesheet.css") as stylesheet:
+    site_style = f"<style>{stylesheet.read()}</style>"
+
 
 def generate_prognostic_data(row: pd.Series, prognostic_type: str) -> str:
     """
@@ -44,6 +47,7 @@ def load_data() -> pd.DataFrame:
 def main():
 
     st.set_page_config(**site_configuration)
+    st.markdown(site_style, unsafe_allow_html=True)
 
     st.title("GCapricorn")
 
