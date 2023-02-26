@@ -82,7 +82,10 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union
         pdb_id = pdb_result["identifier"]
         score = pdb_result["score"]
         structure = requests.get(f"https://files.rcsb.org/download/{pdb_id}.pdb.gz").content
-        structures[pdb_id] = {"score": score, "structure": gzip.decompress(structure).decode()}
+        try:
+            structures[pdb_id] = {"score": score, "structure": gzip.decompress(structure).decode()}
+        except gzip.BadGzipFile:
+            continue
     return structures
 
 
@@ -104,7 +107,12 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     else:
         viewer.addModel(molecule, string_format)
 
-    viewer.setStyle({visualization_type: {"colorscheme": "amino"} if visualization_type == "cartoon" else {}})
+    if visualization_type == "cartoon":
+        colorscheme = st.radio("Color", options=[0, 1, 2], horizontal=True,
+                               format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
+        viewer.setStyle({"cartoon": {"colorscheme": ["amino", "ssPyMol", "chainHetatm"][colorscheme]}})
+    else:
+        viewer.setStyle({visualization_type: {}})
 
     viewer.setHoverable({}, True,
     f"""
