@@ -41,6 +41,9 @@ def generate_chromosome_view() -> None:
     chr_pos['name'] = df_chromosome_filt['Gene']
     chr_pos.columns = ['start_position', 'end_position', 'name']
 
+    # add a brush selection tool
+    brush = alt.selection(type='interval', encodings=['x'])
+
     chromosome = alt.Chart(chr_pos).mark_line().encode(
         x='start_position:Q'
     ).properties(
@@ -56,6 +59,8 @@ def generate_chromosome_view() -> None:
     chart = (chromosome + genes).properties(
         width=600,
         height=130
+    ).add_selection(
+        brush
     )
 
     st.altair_chart(chart, use_container_width=True)
