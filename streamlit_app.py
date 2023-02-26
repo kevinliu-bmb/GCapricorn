@@ -40,7 +40,7 @@ def load_data() -> pd.DataFrame:
     data = pd.read_csv("https://www.proteinatlas.org/download/proteinatlas.tsv.zip", compression="zip", sep="\t")
     data["Favorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="favorable"), axis=1)
     data["Unfavorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="unfavorable"), axis=1)
-    data.dropna(subset=["Uniprot"])
+    data.dropna(subset=["Uniprot"], inplace=True)
     return data
 
 
