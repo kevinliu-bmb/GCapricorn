@@ -89,7 +89,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     """
     Render the molecule using the Py3DMol API.
     :param molecule: path to the molecule file, or string literal containing molecule information.
-    :param string_format: format of the protein. Default format is PDB.
+    :param string_format: format of the protein. Default format is "pdb". One of "pdb", "sdf", "mol2", "xyz", and "cube".
     :return: None.
     """
     visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
@@ -101,7 +101,23 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
             viewer.addModel(file.read(), string_format)
     else:
         viewer.addModel(molecule, string_format)
-    viewer.setStyle({visualization_type: {"color": "spectrum"}})
+    viewer.setStyle({visualization_type: {}})
+    viewer.setHoverable({}, True,
+    f"""
+    function(atom, viewer, event, container) {{
+        if (!atom.label) {{
+            atom.label = viewer.addLabel(atom.resn {'+ ":" + atom.atom' if visualization_type != 'cartoon' else ''},
+            {{position: atom, backgroundColor: 'black', fontColor:'white'}});
+        }}}}
+    """,
+    """
+    function(atom, viewer) { 
+        if(atom.label) {
+            viewer.removeLabel(atom.label);
+            delete atom.label;
+        }
+    }
+    """)
     viewer.zoomTo()
     components.html(viewer._make_html(), width=600, height=400)
 
