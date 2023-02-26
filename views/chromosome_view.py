@@ -1,33 +1,7 @@
-import random
-import numpy as np
-import pandas as pd
+
 import streamlit as st
+import pandas as pd
 import altair as alt
-
-
-def generate_simulated_data() -> pd.DataFrame:
-    """
-    Generate simulated data for testinging the chromosome view.
-    :return: A DataFrame with simulated data.
-    """
-    sim_data = {
-        'position': range(1, 1000001),
-        'value': [10] * 1000000
-    }
-    df_mock = pd.DataFrame(sim_data)
-    df_mock['cancer'] = 'N'
-    max_Y = 100000
-    consecutive_Y = 10000
-    num_groups = max_Y // consecutive_Y
-    min_row_diff = (len(df_mock) - consecutive_Y * num_groups) // (num_groups + 1)
-    start_indices = [i * (consecutive_Y + min_row_diff) + min_row_diff for i in range(num_groups)]
-    y_indices = np.random.choice(df_mock.index, size=max_Y, replace=False)
-    y_indices_groups = np.array_split(y_indices, num_groups)
-    for i, group in enumerate(y_indices_groups):
-        start_idx = start_indices[i]
-        df_mock.loc[start_idx:start_idx + consecutive_Y - 1, 'cancer'] = 'Y'
-
-    return df_mock
 
 
 def generate_chromosome_view() -> None:
@@ -37,6 +11,7 @@ def generate_chromosome_view() -> None:
     """
     st.header("Chromosome View")
 
+    # Load the gene data
     df = st.session_state["data"]
 
     # Mock data for testing.
@@ -56,52 +31,32 @@ def generate_chromosome_view() -> None:
     selected_protein_classes = st.multiselect(label="Selected Protein Classes", options=mock_protein_classes, default=mock_selected_protein_types)
 
     # Filter the data to only include the selected protein classes.
-    ## Split the protein_types column by commas and create a boolean mask using isin()
     mask_protein_types = df['Protein class'].str.split(', ', expand=True).isin(selected_protein_classes).any(axis=1)
-
-    # Filter the DataFrame using the boolean mask
     df_protein_types = df[mask_protein_types]
 
     # Filter the data to only include the selected chromosome.
     df_chromosome_filt = df_protein_types[df_protein_types["Chromosome"] == chromosome_select]
 
-    # Place holder for the chromosome visualization.
-    if df_chromosome_filt.empty:
-        st.write("No data to display.")
-    else:
-        # Convert the Position column to a list of start and end positions.
-        #chr_pos = df_chromosome_filt["Position"].str.split("-", expand=True)
+    chr_pos = df_chromosome_filt['Position'].str.split('-', expand=True)
+    chr_pos['name'] = df_chromosome_filt['Gene']
+    chr_pos.columns = ['start_position', 'end_position', 'name']
 
-        # get the minimal start position and maximal end position
-        #min_start = chr_pos[0].astype(int).min()
-        #max_end = chr_pos[1].astype(int).max()
+    chromosome = alt.Chart(chr_pos).mark_line().encode(
+        x='start_position:Q'
+    ).properties(
+        title=f"Displaying results for Chromosome {chromosome_select}"
+    )
 
-        # Create a list of chromosome positions based on the minimal start position and maximal end position.
-        #chromosome_positions = [i for i in range(min_start, max_end)]
-        
-        # chart_top = alt.Chart(df_chromosome_filt).mark_bar().encode(
-        #     x=alt.X('Chromosome:N'),
-        #     y=alt.Y('count(Gene):Q'),
-        #     color=alt.Color('Chromosome:N')
-        # )
+    genes = chromosome.mark_rect(size=10).encode(
+        x='start_position:Q',
+        x2='end_position:Q',
+        tooltip=['name', 'start_position', 'end_position']
+    )
 
-        df_mock = generate_simulated_data()
+    chart = (chromosome + genes).properties(
+        width=600,
+        height=130
+    )
 
-        chart = alt.Chart(df_chromosome_filt).mark_bar().encode(
-            x=alt.X('Chromosome:N'),
-            y=alt.Y('count(Gene):Q'),
-            color=alt.Color('Chromosome:N')
-        ).properties(
-            width=600,
-            height=300
-        ) & alt.Chart(df_mock).mark_bar().encode(
-            x=alt.X('position:Q', title="Chromosome Position", axis=alt.Axis(labels=False)),
-            y=alt.Y('value:Q', axis=None),
-            color=alt.Color('cancer:N', scale=alt.Scale(domain=['N', 'Y'], range=['#d3d3d3', '#ff0000'])),
-        ).properties(
-            width=600,
-            height=25
-        )
-
-        st.altair_chart(chart, use_container_width=True)
+    st.altair_chart(chart, use_container_width=True)
 
