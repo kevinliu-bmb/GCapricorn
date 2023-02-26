@@ -34,12 +34,10 @@ def generate_protein_info_view(uniprot_id: str, data: pd.DataFrame) -> None:
     assert len(protein_info) == 1
     protein_info = protein_info.iloc[0]
 
-    gene_col, _ = st.columns(2)
+    gene_col, chromosome_col, ensembl_col = st.columns([2, 1, 3])
     gene_col.metric("Gene", protein_info["Gene"])
-
-    gene_synonym_col, ensemble_id_col = st.columns(2)
-    gene_synonym_col.metric("Gene synonyms", protein_info["Gene synonym"])
-    ensemble_id_col.metric("Ensembl ID", protein_info["Ensembl"])
+    chromosome_col.metric("Chromosome", protein_info["Chromosome"])
+    ensembl_col.metric("Ensembl ID", protein_info["Ensembl"])
 
     seq = load_protein_sequence(uniprot_id)
     seq = re.sub(r"(\w{10})", r"\1 ", seq)
@@ -106,7 +104,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     else:
         viewer.addModel(molecule, string_format)
 
-    viewer.setStyle({visualization_type: {"colorscheme": "amino"}})
+    viewer.setStyle({visualization_type: {"colorscheme": "amino"} if visualization_type == "cartoon" else {}})
 
     viewer.setHoverable({}, True,
     f"""
