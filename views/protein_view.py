@@ -99,7 +99,9 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                       format_func=lambda x: f"{x.title()} model")
 
-    viewer = py3Dmol.view(width=600, height=400)
+    viewer_dimensions = {"width": 800, "height": 600}
+
+    viewer = py3Dmol.view(**viewer_dimensions)
 
     if os.path.exists(molecule):
         with open(molecule, "r") as file:
@@ -115,27 +117,49 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
         viewer.setStyle({visualization_type: {}})
 
     viewer.setHoverable({}, True,
-    f"""
-    // On hover function
-    function(atom, viewer, event, container) {{
-        if (!atom.label) {{
-            atom.label = viewer.addLabel(
-                atom.resn.charAt(0) + atom.resn.slice(1).toLowerCase() + 
-                atom.resi {'+ ":" + atom.atom' if visualization_type != 'cartoon' else ''},
-            {{position: atom, backgroundColor: 'black', fontColor:'white'}});
-        }}}}
-    """,
-    """
-    // On remove hover function
-    function(atom, viewer) { 
-        if(atom.label) {
-            viewer.removeLabel(atom.label);
-            delete atom.label;
+        f"""
+        // On hover function
+        function(atom, viewer, event, container) {{
+            if (!atom.label) {{
+                atom.label = viewer.addLabel(
+                    atom.resn.charAt(0) + atom.resn.slice(1).toLowerCase() + 
+                    atom.resi {'+ ":" + atom.atom' if visualization_type != 'cartoon' else ''},
+                {{position: atom, backgroundColor: 'black', fontColor:'white'}});
+            }}}}
+        """,
+        """
+        // On remove hover function
+        function(atom, viewer) { 
+            if(atom.label) {
+                viewer.removeLabel(atom.label);
+                delete atom.label;
+            }
         }
-    }
-    """)
+        """
+    )
+
+    viewer.setClickable({}, True,
+        """
+        function(atom, viewer, event, container) {
+            viewer.zoomTo({serial: atom.serial});
+            viewer.removeAllLabels();
+            var label = viewer.addLabel("Selected " + atom.resn.charAt(0) + atom.resn.slice(1).toLowerCase() +
+             atom.resi + " Chain: " + atom.chain, 
+                {
+                    useScreen:true,
+                    inFront: true,
+                    position: {x: 500, y: 500, z: 0},
+                    fontColor: "steelblue",
+                    backgroundColor: "white",
+                    borderThickness: 3,
+                    borderColor: "steelblue",
+                }
+            );
+        }
+        """
+    )
     viewer.zoomTo()
-    components.html(viewer._make_html(), width=600, height=400)
+    components.html(viewer._make_html(), **viewer_dimensions)
 
 
 def generate_protein_structure_view(uniprot_id: str) -> None:
