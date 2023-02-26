@@ -17,7 +17,7 @@ def generate_chromosome_view() -> None:
     # Mock data for testing.
     mock_selected_cancer_type = ["Liver cancer"]
     mock_selected_protein_types = ["Enzymes", "Transporters"] 
-    mock_protein_classes = ["Transcription Factors", "Receptors", "Enzymes", "Transporters", "Structural Proteins"]
+    mock_protein_classes = ["Enzymes", "Transporters"]
 
     # Generate a list of chromosome IDs and names.
     chromosome_ids = df["Chromosome"].unique()
