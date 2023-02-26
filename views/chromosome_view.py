@@ -46,8 +46,6 @@ def generate_chromosome_view() -> None:
 
     chromosome = alt.Chart(chr_pos).mark_line().encode(
         x='start_position:Q'
-    ).properties(
-        title=f"Displaying results for Chromosome {chromosome_select}"
     )
 
     genes = chromosome.mark_rect(size=10).encode(
@@ -56,12 +54,20 @@ def generate_chromosome_view() -> None:
         tooltip=['name', 'start_position', 'end_position']
     )
 
-    chart = (chromosome + genes).properties(
+    chart_bottom = (chromosome + genes).properties(
         width=600,
-        height=130
-    ).add_selection(
-        brush
-    )
+        height=50,
+        title=f"Brush over to zoom into Chromosome {chromosome_select}"
+    ).add_selection(brush)
 
-    st.altair_chart(chart, use_container_width=True)
+    chart_top = alt.Chart(chr_pos).mark_rect().encode(
+        x='start_position:Q',
+        x2='end_position:Q').properties(
+        width=600,
+        height=100
+    ).transform_filter(brush)
+
+    chromosome_chart = chart_top & chart_bottom
+
+    st.altair_chart(chromosome_chart, use_container_width=True)
 
