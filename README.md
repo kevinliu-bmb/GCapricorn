@@ -2,13 +2,11 @@
 
 *This data visualization project is completed for the BMI706 - Data Visualization for Biomedical Applications course.*
 
-GCapricorn is an app that helps cancer researchers investigate cancer-related proteins.
-
-Biomedical researchers, clinicians, and genetic counselors in the oncology field. Our application will allow researchers and clinicians to explore cancer-related proteins from the clinical level to the amino acid and nucleotide level.
+GCapricorn is an app that enables biomedical researchers and clinicians to explore and enrich their knowledge of cancer-related genes and proteins from the clinical level to the protein and amino acid level.
 
 [Access GCapricorn](https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/)
 
-[Kevin's Portal](https://kevinliu-bmb-bmi706-runtime-terror-gcapri-streamlit-app-vrd6nx.streamlit.app/)
+[Kevin's Secret Portal](https://kevinliu-bmb-bmi706-runtime-terror-gcapri-streamlit-app-vrd6nx.streamlit.app/)
 
 ## Team Members
 
