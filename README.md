@@ -6,8 +6,6 @@ GCapricorn is an app that enables biomedical researchers and clinicians to explo
 
 [Access GCapricorn](https://kevinliu-bmb-bmi706-runtime-terror-gcapric-streamlit-app-t448c0.streamlit.app/)
 
-[Kevin's Secret Portal](https://kevinliu-bmb-bmi706-runtime-terror-gcapri-streamlit-app-vrd6nx.streamlit.app/)
-
 ## Team Members
 
 Team Runtime Terror
