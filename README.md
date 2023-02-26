@@ -36,4 +36,4 @@ Following the selection of the specific gene of interest, we will provide a deta
 
     [3] Ashburner et al. Gene ontology: tool for the unification of biology. Nat Genet. May 2000;25(1):25-9.
 
-    [4] The UniProt Consortium, UniProt: the Universal Protein Knowledgebase in 2023, Nucleic Acids Res. 51:D523–D531 (2023)
+    [4] The UniProt Consortium, UniProt: the Universal Protein Knowledgebase in 2023, Nucleic Acids Res. 2023;51:D523–D531
