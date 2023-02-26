@@ -96,21 +96,27 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
                                       format_func=lambda x: f"{x.title()} model")
 
     viewer = py3Dmol.view(width=600, height=400)
+
     if os.path.exists(molecule):
         with open(molecule, "r") as file:
             viewer.addModel(file.read(), string_format)
     else:
         viewer.addModel(molecule, string_format)
-    viewer.setStyle({visualization_type: {}})
+
+    viewer.setStyle({visualization_type: {"color": "spectrum"}})
     viewer.setHoverable({}, True,
     f"""
+    // On hover function
     function(atom, viewer, event, container) {{
         if (!atom.label) {{
-            atom.label = viewer.addLabel(atom.resn {'+ ":" + atom.atom' if visualization_type != 'cartoon' else ''},
+            atom.label = viewer.addLabel(
+                atom.resn.charAt(0) + atom.resn.slice(1).toLowerCase() + 
+                atom.resi {'+ ":" + atom.atom' if visualization_type != 'cartoon' else ''},
             {{position: atom, backgroundColor: 'black', fontColor:'white'}});
         }}}}
     """,
     """
+    // On remove hover function
     function(atom, viewer) { 
         if(atom.label) {
             viewer.removeLabel(atom.label);
