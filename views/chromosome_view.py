@@ -63,7 +63,7 @@ def generate_chromosome_view() -> None:
         chart_bottom = (chart_chromosome + chart_genes).properties(
             width=600,
             height=50,
-            title=f"Brush over to zoom into Chromosome {chromosome_select}"
+            title=f"Brush over to only display the selected region on Chromosome {chromosome_select}"
         ).add_selection(brush)    
         
         chart_chromosome_top = alt.Chart(df_protein_types).mark_line().encode(
@@ -82,7 +82,7 @@ def generate_chromosome_view() -> None:
         ).properties(
             width=600,
             height=50,
-            title=f"Selected Chromosomal Region"
+            title=f"Scroll to zoom into the chromosomal region"
         ).transform_filter(brush).interactive()
         
         chart_top = (chart_chromosome_top + chart_selected_genes)
