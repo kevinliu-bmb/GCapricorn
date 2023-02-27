@@ -21,22 +21,22 @@ def generate_chromosome_view() -> None:
 
     selected_protein_classes = st.multiselect(label="Selected Protein Classes", options=protein_classes, default=None)
     mask_protein_types = df_chromosome_filt["Protein class"].str.split(", ", expand=True).isin(selected_protein_classes).any(axis=1)
-    df_protein_types = df_chromosome_filt[mask_protein_types]
+    df_filt = df_chromosome_filt[mask_protein_types]
 
     if not selected_protein_classes:
         st.warning("No protein classes selected. Please select at least one protein class.")
     else:
-        df_protein_types["start_position"] = df_protein_types["Position"].str.split("-", expand=True)[0]
-        df_protein_types["end_position"] = df_protein_types["Position"].str.split("-", expand=True)[1]
+        df_filt["start_position"] = df_filt["Position"].str.split("-", expand=True)[0]
+        df_filt["end_position"] = df_filt["Position"].str.split("-", expand=True)[1]
 
         brush = alt.selection(type="interval", encodings=["x"])
 
-        chart_chromosome = alt.Chart(df_protein_types).mark_line().encode(
+        chart_chromosome = alt.Chart(df_filt).mark_line().encode(
             x="start_position:Q",
             tooltip=["Gene", "start_position", "end_position"]
         )
 
-        chart_genes = alt.Chart(df_protein_types).mark_rect(size=10).encode(
+        chart_genes = alt.Chart(df_filt).mark_rect(size=10).encode(
             x="start_position:Q",
             x2="end_position:Q",
             tooltip=["Gene", "start_position", "end_position"],
@@ -49,7 +49,7 @@ def generate_chromosome_view() -> None:
             title=f"Brush over to only display the selected region on Chromosome {chromosome_select}"
         ).add_selection(brush)
         
-        chart_chromosome_top = alt.Chart(df_protein_types).mark_line().encode(
+        chart_chromosome_top = alt.Chart(df_filt).mark_line().encode(
             x="start_position:Q",
             tooltip=["Gene", "start_position", "end_position"]
         ).properties(
@@ -57,7 +57,7 @@ def generate_chromosome_view() -> None:
             height=150
         ).transform_filter(brush)
         
-        chart_selected_genes = alt.Chart(df_protein_types).mark_circle(size=50).encode(
+        chart_selected_genes = alt.Chart(df_filt).mark_circle(size=50).encode(
             x="start_position:Q",
             color="Protein class:N",
             tooltip=["Gene", "start_position", "end_position", "Protein class"]
