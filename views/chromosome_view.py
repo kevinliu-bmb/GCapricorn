@@ -29,7 +29,7 @@ def generate_chromosome_view() -> None:
     protein_classes = list(set(protein_classes))
 
     # Create protein types selection widget.
-    selected_protein_classes = st.multiselect(label="Selected Protein Classes", options=protein_classes, default=protein_classes)
+    selected_protein_classes = st.multiselect(label="Selected Protein Classes", options=protein_classes, default=None)
 
     # Filter the data to only include the selected protein classes.
     mask_protein_types = df_chromosome_filt["Protein class"].str.split(", ", expand=True).isin(selected_protein_classes).any(axis=1)
