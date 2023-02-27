@@ -30,7 +30,6 @@ def generate_prognostic_data(row: pd.Series, prognostic_type: str) -> str:
     return ",".join(map(lambda x: x.split("-")[1].strip(), prognostics))
 
 
-
 @st.cache_data
 def load_data() -> pd.DataFrame:
     """

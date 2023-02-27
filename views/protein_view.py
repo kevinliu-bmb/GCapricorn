@@ -89,17 +89,17 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union
     return structures
 
 
-def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
+def render_py3DMol(molecule: str, string_format: str = "pdb") -> py3Dmol.view:
     """
     Render the molecule using the Py3DMol API.
     :param molecule: path to the molecule file, or string literal containing molecule information.
     :param string_format: format of the protein. Default format is "pdb". One of "pdb", "sdf", "mol2", "xyz", and "cube".
-    :return: None.
+    :return: The view object.
     """
     visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                       format_func=lambda x: f"{x.title()} model")
 
-    viewer_dimensions = {"width": 800, "height": 600}
+    viewer_dimensions = {"height": 600}
 
     viewer = py3Dmol.view(**viewer_dimensions)
 
@@ -148,7 +148,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
                 {
                     useScreen:true,
                     inFront: true,
-                    position: {x: 500, y: 500, z: 0},
+                    position: {x: 0, y: 0, z: 0},
                     fontColor: "steelblue",
                     backgroundColor: "white",
                     borderThickness: 3,
@@ -160,6 +160,17 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> None:
     )
     viewer.zoomTo()
     components.html(viewer._make_html(), **viewer_dimensions)
+    return viewer
+
+
+def reset_view(viewer: py3Dmol.view) -> None:
+    """
+    Reset a py3Dmol visualization to its default state.
+    :param viewer: The view object to reset.
+    :return: None.
+    """
+    viewer.removeAllLabels()
+    viewer.zoomTo()
 
 
 def generate_protein_structure_view(uniprot_id: str) -> None:
@@ -178,7 +189,8 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
                                           x: f"{x} - Sequence Match: {matched_structures[x]['score'] * 100:.2f}%")
-        render_py3DMol(structures[structure_selector]["structure"])
+        viewer = render_py3DMol(structures[structure_selector]["structure"])
+        st.button("Reset view", on_click=lambda: reset_view(viewer))
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
 
