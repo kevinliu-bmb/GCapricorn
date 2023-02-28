@@ -53,10 +53,21 @@ def main():
 
     st.title("GCapricorn")
 
-
     data = load_data()
     st.session_state["unfiltered_data"] = data
     st.session_state["data"] = data
+
+    protein_classes = [x.split(", ") for x in data["Protein class"]]
+    protein_classes = [item for sublist in protein_classes for item in sublist]
+    protein_classes = list(set(protein_classes))
+
+    left, right = st.columns(2)
+    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes, default=["Enzymes"])
+    st.session_state["protein_selection"] = protein_selection
+    cancer_types = map(lambda x: x.split("-")[1].strip(),
+                       filter(lambda x: "Pathology prognostics" in x, data.columns))
+    cancer_selection = left.selectbox(label="Select Cancer Type", options=cancer_types, index=0)
+    st.session_state["cancer_selection"] = cancer_selection
 
     # Horizontal 2 + 1 layout
     top_panel = st.container()
