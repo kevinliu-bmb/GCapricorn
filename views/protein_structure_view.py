@@ -150,15 +150,19 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
     matched_structures = {k: v for k, v in structures.items() if v["score"] > 0.0}
 
     if len(matched_structures) > 0:
-        structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
+        select, style, view = st.columns([2, 3, 8])
+        with select:
+            structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
                                           x: f"{x} - Score: {matched_structures[x]['score'] * 100:.2f}%")
-        visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
+        with style:
+            visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                           format_func=lambda x: f"{x.title()} model")
-        colorscheme = st.radio("Color", options=[0, 1, 2],
+            colorscheme = st.radio("Color", options=[0, 1, 2],
                                format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
-        viewer = render_py3DMol(structures[structure_selector]["structure"], visualization_type, colorscheme)
-        st.columns(3)[1].button("Reset view", on_click=lambda: reset_view(viewer))
+        with view:
+            viewer = render_py3DMol(structures[structure_selector]["structure"], visualization_type, colorscheme)
+            st.columns(3)[1].button("Reset view", on_click=lambda: reset_view(viewer))
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")

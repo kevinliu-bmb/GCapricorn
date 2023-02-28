@@ -17,8 +17,10 @@ def generate_protein_view() -> None:
 
     uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
 
-    info_view, structure_view = st.columns(2)
-    sequence_view = st.container()
+    info_view, sequence_view = st.columns(2)
+
+    st.header("Protein Structure")
+    structure_view = st.container()
 
     with info_view:
         generate_protein_details_view(uniprot_id, data)
