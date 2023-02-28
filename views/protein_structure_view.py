@@ -8,7 +8,7 @@ import requests
 import streamlit as st
 import streamlit.components.v1 as components
 
-from views.protein_info_view import load_protein_sequence
+from views.protein_sequence_view import load_protein_sequence
 
 
 @st.cache_data
@@ -55,15 +55,16 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union
     return structures
 
 
-def render_py3DMol(molecule: str, string_format: str = "pdb") -> py3Dmol.view:
+def render_py3DMol(molecule: str, visualization_type: str, colorscheme: int, string_format: str = "pdb") -> py3Dmol.view:
     """
     Render the molecule using the Py3DMol API.
     :param molecule: path to the molecule file, or string literal containing molecule information.
+    :param visualization_type: the type of visualization to render. One of {"cartoon", "stick", "sphere"}.
+    :param colorscheme: the color scheme to show in the visualization.
+    An integer to index the ["amino", "ssPyMol", "chainHetatm"] list.
     :param string_format: format of the protein. Default format is "pdb". One of "pdb", "sdf", "mol2", "xyz", and "cube".
     :return: The view object.
     """
-    visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
-                                      format_func=lambda x: f"{x.title()} model")
 
     viewer_dimensions = {"height": 500}
 
@@ -76,8 +77,6 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> py3Dmol.view:
         viewer.addModel(molecule, string_format)
 
     if visualization_type == "cartoon":
-        colorscheme = st.radio("Color", options=[0, 1, 2], horizontal=True,
-                               format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
         viewer.setStyle({"cartoon": {"colorscheme": ["amino", "ssPyMol", "chainHetatm"][colorscheme]}})
     else:
         viewer.setStyle({visualization_type: {}})
@@ -141,7 +140,7 @@ def reset_view(viewer: py3Dmol.view) -> None:
 
 def generate_protein_structure_view(uniprot_id: str) -> None:
     """
-    The right part of the protein details, containing structural information and a 3D molecule visualization.
+    Visualize the 3D structure of the protein.
     :param uniprot_id: The UniProt ID of the protein to visualize.
     :return: None.
     """
@@ -155,7 +154,11 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
                                           x: f"{x} - Score: {matched_structures[x]['score'] * 100:.2f}%")
-        viewer = render_py3DMol(structures[structure_selector]["structure"])
+        visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
+                                          format_func=lambda x: f"{x.title()} model")
+        colorscheme = st.radio("Color", options=[0, 1, 2],
+                               format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
+        viewer = render_py3DMol(structures[structure_selector]["structure"], visualization_type, colorscheme)
         st.columns(3)[1].button("Reset view", on_click=lambda: reset_view(viewer))
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
