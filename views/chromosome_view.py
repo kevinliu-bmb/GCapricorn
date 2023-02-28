@@ -12,12 +12,13 @@ def generate_chromosome_view() -> None:
 
     data = st.session_state["data"]
 
+    cancer_selection = st.session_state["cancer_selection"]
+    # TODO: filter to only include proteins and chromosomes associated with the selected cancer type.
+
     protein_selection = st.session_state["protein_selection"]
 
     chromosome_select = st.selectbox(label="Chromosome", options=data["Chromosome"].unique(), index=0)
     chromosome_data = data[data["Chromosome"] == chromosome_select]
-
-    # TODO: filter to only include proteins and chromosomes associated with the selected cancer type.
 
     if not protein_selection:
         st.warning("No protein classes selected. Displaying all proteins in the chromosome.")
