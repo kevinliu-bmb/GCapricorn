@@ -19,14 +19,15 @@ def generate_protein_view() -> None:
 
     info_view, sequence_view = st.columns(2)
 
-    st.header("Protein Structure")
     structure_view = st.container()
 
     with info_view:
         generate_protein_details_view(uniprot_id, data)
 
     with sequence_view:
+        st.subheader("Protein Sequence")
         generate_protein_sequence_view(uniprot_id)
 
     with structure_view:
+        st.subheader("Protein Structure")
         generate_protein_structure_view(uniprot_id)

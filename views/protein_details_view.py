@@ -48,7 +48,8 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
     info_row_1 = st.columns(2)
     info_row_1[0].markdown(rf"Gene description <br> <div class='gc-info-box'>{protein_info['Gene description']}</div>",
                            unsafe_allow_html=True)
-    info_row_1[1].markdown(rf"Protein classes <br> <div class='gc-info-box'>{protein_info['Protein class']}</div>",
+    protein_classes = [f"<li>{protein_class.strip()}</li>" for protein_class in protein_info['Protein class'].split(",")]
+    info_row_1[1].markdown(f"Protein classes <br> <div class='gc-info-box'><ul>{''.join(protein_classes)}</ul></div>",
                            unsafe_allow_html=True)
 
     info_row_2 = st.columns(2)

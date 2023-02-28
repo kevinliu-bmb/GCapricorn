@@ -20,6 +20,7 @@ amino_acid_info = pd.DataFrame({
               "#E60A0A", "#145AFF", "#8282D2", "#145AFF", "#EBEBEB", "#DC9682"]
 })
 
+
 @st.cache_data
 def load_protein_sequence(protein_id: str) -> str:
     """
@@ -31,6 +32,76 @@ def load_protein_sequence(protein_id: str) -> str:
     return "".join([x.strip() for x in fasta_string.split("\n")[1:]])
 
 
+@st.cache_data
+def generate_amino_acid_counts_chart(seq: str) -> alt.Chart:
+    """
+    Given a protein sequence, build a bar chart displaying amino acid frequency data.
+    :param seq: The sequence of amino acids as one-letter codes.
+    :return: an Altair bar chart displaying amino acid frequencies.
+    """
+    amino_acid_counts = Counter(seq)
+    amino_acid_counts = pd.DataFrame({"one_letter_code": amino_acid_counts.keys(), "count": amino_acid_counts.values()})
+    amino_acid_table = pd.merge(amino_acid_counts, amino_acid_info, on="one_letter_code")
+    amino_acid_chart = alt.Chart(amino_acid_table).mark_bar().encode(
+        x=alt.X("three_letter_code", type="nominal", sort="-y", title="Amino Acid Type"),
+        y=alt.Y("count", type="quantitative", title="Amino Acid Count"),
+        color=alt.Color("color", type="nominal", scale=None),
+        tooltip=[alt.Tooltip("three_letter_code:N", title="Amino acid"),
+                 alt.Tooltip("full_name:N", title="Full name"),
+                 alt.Tooltip("count:Q", title="Count")]
+    ).properties(title="Sequence by amino acid type")
+    return amino_acid_chart
+
+
+@st.cache_data
+def generate_sequence_visualization(seq: str) -> alt.Chart:
+    """
+    Given a protein sequence, generate a protein sequence visualization.
+    :param seq: The sequence to visualize.
+    :return: An Altair Chart showing an interactive view of the sequence, allowing users to zoom and pan.
+    """
+    sequence_table = pd.DataFrame({'amino_acid': list(seq),
+                                   'position': [x for x in range(len(seq))]})
+    sequence_table["amino_acid_name"] = sequence_table["amino_acid"].apply(
+        lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["full_name"].iloc[0]
+    )
+    sequence_table["color"] = sequence_table["amino_acid"].apply(
+        lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["color"].iloc[0]
+    )
+
+    interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [0, 50]})
+
+    sequence_visualization = alt.Chart(sequence_table).mark_text(
+        fontWeight='bold',
+        color="black",
+        font="monospace"
+    ).encode(
+        x=alt.X("position", type="quantitative", title="Residue number",
+                bin=alt.Bin(step=1), scale=alt.Scale(domain=interval.ref())),
+        text="amino_acid:N",
+        tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")],
+    ).properties(
+        width=800,
+        height=50
+    )
+
+    sequence_colors = alt.Chart(sequence_table).mark_rect().encode(
+        x=alt.X("position", type="quantitative", title="Residue number",
+                bin=alt.Bin(step=1), scale=alt.Scale(domain=interval.ref())),
+        color=alt.Color("color", type="nominal", scale=None),
+        tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")]
+    )
+
+    position_selector = alt.Chart(sequence_table).mark_line().encode(
+        x=alt.X("position", type="quantitative", title="Drag to select", scale=alt.Scale(domain=(0, len(seq))))
+    ).properties(
+        width=800,
+        height=50
+    ).add_selection(interval)
+
+    return ((sequence_colors + sequence_visualization) & position_selector).configure_axisX(format="d")
+
+
 def generate_protein_sequence_view(uniprot_id: str) -> None:
     """
     Visualize the protein sequence of amino acids.
@@ -38,18 +109,9 @@ def generate_protein_sequence_view(uniprot_id: str) -> None:
     :return: None.
     """
     seq = load_protein_sequence(uniprot_id)
-    st.write("Amino Acid Sequence")
-    st.info(seq)
 
-    amino_acid_counts = Counter(seq)
-    amino_acid_counts = pd.DataFrame({"one_letter_code": amino_acid_counts.keys(), "count": amino_acid_counts.values()})
-    amino_acid_table = pd.merge(amino_acid_counts, amino_acid_info, on="one_letter_code")
-    amino_acid_chart = alt.Chart(amino_acid_table).mark_bar().encode(
-        x=alt.X("one_letter_code", type="nominal", sort="-y", title="Amino Acid Type"),
-        y=alt.Y("count", type="quantitative", title="Amino Acid Count"),
-        color=alt.Color("color", type="nominal", scale=None),
-        tooltip=[alt.Tooltip("three_letter_code:N", title="Amino acid"),
-                 alt.Tooltip("full_name:N", title="Full name"),
-                 alt.Tooltip("count:Q", title="Count")]
-    ).properties(title="Sequence by amino acid type")
+    sequence_visualization = generate_sequence_visualization(seq)
+    st.altair_chart(sequence_visualization, use_container_width=True)
+
+    amino_acid_chart = generate_amino_acid_counts_chart(seq)
     st.altair_chart(amino_acid_chart, use_container_width=True)
