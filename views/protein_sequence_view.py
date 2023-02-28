@@ -74,7 +74,7 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     sequence_table["position"] += 1
     sequence_table["empty_string"] = ""
 
-    interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [1, 51]})
+    interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [1, 51]}, zoom=True)
 
     sequence_visualization = alt.Chart(sequence_table).transform_calculate(
         show_text="isDefined(interval_select.position) \

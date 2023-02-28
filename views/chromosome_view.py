@@ -3,6 +3,7 @@ import streamlit as st
 import altair as alt
 
 
+@st.cache_data
 def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     """
     Generates the chromosome Altair chart.

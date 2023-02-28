@@ -55,7 +55,9 @@ def load_protein_structures(sequence: str) -> Optional[dict[str, dict[str, Union
     return structures
 
 
-def render_py3DMol(molecule: str, visualization_type: str, colorscheme: int, string_format: str = "pdb") -> py3Dmol.view:
+@st.cache_resource
+def render_py3DMol(molecule: str, visualization_type: str, colorscheme: int, string_format: str = "pdb",
+                   viewer_dimensions: dict = None) -> py3Dmol.view:
     """
     Render the molecule using the Py3DMol API.
     :param molecule: path to the molecule file, or string literal containing molecule information.
@@ -63,10 +65,9 @@ def render_py3DMol(molecule: str, visualization_type: str, colorscheme: int, str
     :param colorscheme: the color scheme to show in the visualization.
     An integer to index the ["amino", "ssPyMol", "chainHetatm"] list.
     :param string_format: format of the protein. Default format is "pdb". One of "pdb", "sdf", "mol2", "xyz", and "cube".
+    :param viewer_dimensions: Dimensions for the viewer as a dict with optional keys "height" and "width" and pixel values.
     :return: The view object.
     """
-
-    viewer_dimensions = {"height": 500}
 
     viewer = py3Dmol.view(**viewer_dimensions)
 
@@ -124,7 +125,6 @@ def render_py3DMol(molecule: str, visualization_type: str, colorscheme: int, str
         """
     )
     viewer.zoomTo()
-    components.html(viewer._make_html(), **viewer_dimensions)
     return viewer
 
 
@@ -159,10 +159,16 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
         with style:
             visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                           format_func=lambda x: f"{x.title()} model")
-            colorscheme = st.radio("Color", options=[0, 1, 2],
-                               format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
+            if visualization_type == "cartoon":
+                colorscheme = st.radio("Color", options=[0, 1, 2],
+                                       format_func=lambda x: ["Amino acids", "Secondary structure", "Monomers"][x])
+            else:
+                colorscheme = None
         with view:
-            viewer = render_py3DMol(structures[structure_selector]["structure"], visualization_type, colorscheme)
+            viewer_dimensions = {"height": 500}
+            viewer = render_py3DMol(structures[structure_selector]["structure"], visualization_type, colorscheme,
+                                    viewer_dimensions=viewer_dimensions)
+            components.html(viewer._make_html(), **viewer_dimensions)
             st.columns(3)[1].button("Reset view", on_click=lambda: reset_view(viewer))
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")

@@ -82,5 +82,8 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
         ).properties(title="RNA expression (TPM) by tissue type", width=(350 if cell_tpm is not None else 700))
         bar_charts.append(tissue_chart)
 
-    chart = reduce(operator.or_, bar_charts)
-    st.altair_chart(chart, use_container_width=True)
+    try:
+        chart = reduce(operator.or_, bar_charts)
+        st.altair_chart(chart, use_container_width=True)
+    except TypeError:
+        pass
