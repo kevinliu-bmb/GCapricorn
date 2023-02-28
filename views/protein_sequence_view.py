@@ -68,8 +68,9 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     sequence_table["color"] = sequence_table["amino_acid"].apply(
         lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["color"].iloc[0]
     )
+    sequence_table["position"] += 1
 
-    interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [0, 50]})
+    interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [1, 51]})
 
     sequence_visualization = alt.Chart(sequence_table).mark_text(
         fontWeight='bold',
@@ -93,7 +94,7 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     )
 
     position_selector = alt.Chart(sequence_table).mark_line().encode(
-        x=alt.X("position", type="quantitative", title="Drag to select", scale=alt.Scale(domain=(0, len(seq))))
+        x=alt.X("position", type="quantitative", title="Drag to select", scale=alt.Scale(domain=(1, len(seq) + 1)))
     ).properties(
         width=800,
         height=50
