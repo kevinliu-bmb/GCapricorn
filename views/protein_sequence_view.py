@@ -65,21 +65,34 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     sequence_table["amino_acid_name"] = sequence_table["amino_acid"].apply(
         lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["full_name"].iloc[0]
     )
+    sequence_table["amino_acid_three_letter"] = sequence_table["amino_acid"].apply(
+        lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["three_letter_code"].iloc[0]
+    )
     sequence_table["color"] = sequence_table["amino_acid"].apply(
         lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["color"].iloc[0]
     )
     sequence_table["position"] += 1
+    sequence_table["empty_string"] = ""
 
     interval = alt.selection(type="interval", name="interval_select", encodings=["x"], init={"x": [1, 51]})
 
-    sequence_visualization = alt.Chart(sequence_table).mark_text(
+    sequence_visualization = alt.Chart(sequence_table).transform_calculate(
+        show_text="isDefined(interval_select.position) \
+        ? ((interval_select.position[1] - interval_select.position[0] <= 9) \
+            ? datum.amino_acid_name \
+            : ((interval_select.position[1] - interval_select.position[0] <= 25) ? datum.amino_acid_three_letter : \
+                ((interval_select.position[1] - interval_select.position[0] <= 90) ? datum.amino_acid : datum.empty_string)\
+            ) \
+        ) \
+        : datum.empty_string"
+    ).mark_text(
         fontWeight='bold',
         color="black",
         font="monospace"
     ).encode(
         x=alt.X("position", type="quantitative", title="Residue number",
                 bin=alt.Bin(step=1), scale=alt.Scale(domain=interval.ref())),
-        text="amino_acid:N",
+        text="show_text:N",
         tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")],
     ).properties(
         width=800,
