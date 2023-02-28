@@ -27,7 +27,7 @@ def generate_chromosome_view() -> None:
     chromosome_proteins["start_position"] = chromosome_proteins["Position"].str.split("-", expand=True)[0]
     chromosome_proteins["end_position"] = chromosome_proteins["Position"].str.split("-", expand=True)[1]
 
-    brush = alt.selection(type="interval", encodings=["x"])
+    brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "True" in the tooltip.
 
     chart_chromosome = alt.Chart(chromosome_proteins).mark_line().encode(
         x="start_position:Q",
@@ -38,7 +38,7 @@ def generate_chromosome_view() -> None:
         x="start_position:Q",
         x2="end_position:Q",
         tooltip=["Gene", "start_position", "end_position"],
-        color=alt.Color("Protein class:N", legend=None) # TODO: color by selected protein classes.
+        color=alt.Color("Protein class:N") # TODO: color by selected protein classes; BUG: not displaying the simplified selected protein classes.
     )
 
     chart_bottom = (chart_chromosome + chart_genes).properties(
