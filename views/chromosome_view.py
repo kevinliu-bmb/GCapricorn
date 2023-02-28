@@ -71,7 +71,7 @@ def generate_chromosome_view() -> None:
     chart_top = (chart_chromosome_top + chart_selected_genes)
 
     chart = (chart_top & chart_bottom).configure_axis(
-        titleFontSize=0
+        titleFontSize=0 # BUG: not hiding the axis title.
     )
 
     st.altair_chart(chart, use_container_width=True)
