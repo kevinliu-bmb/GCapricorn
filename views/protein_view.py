@@ -4,11 +4,26 @@ import os
 import re
 from typing import Optional, Union
 
+import altair as alt
 import pandas as pd
 import py3Dmol
 import requests
 import streamlit as st
 import streamlit.components.v1 as components
+
+tpm_column_names = {
+    "cell": "RNA single cell type specific nTPM",
+    "tissue": "RNA tissue specific nTPM"
+}
+
+@st.cache_data
+def load_protein_tpm(protein_info: pd.Series, by: str = "cell") -> Optional[pd.DataFrame]:
+    if pd.isna(protein_info[tpm_column_names[by]]):
+        return None
+    else:
+        values = protein_info[tpm_column_names[by]]
+        values_dict = {x.split(":")[0].strip().title(): float(x.split(":")[1].strip()) for x in values.split(";")}
+        return pd.DataFrame({by: values_dict.keys(), "TPM": values_dict.values()})
 
 
 @st.cache_data
@@ -38,6 +53,39 @@ def generate_protein_info_view(uniprot_id: str, data: pd.DataFrame) -> None:
     gene_col.metric("Gene", protein_info["Gene"])
     chromosome_col.metric("Chromosome", protein_info["Chromosome"])
     ensembl_col.metric("Ensembl ID", protein_info["Ensembl"])
+
+    info_row_1 = st.columns(2)
+    info_row_1[0].markdown(rf"Gene description <br> <div class='gc-info-box'>{protein_info['Gene description']}</div>",
+                     unsafe_allow_html=True)
+    info_row_1[1].markdown(rf"Protein classes <br> <div class='gc-info-box'>{protein_info['Protein class']}</div>",
+                     unsafe_allow_html=True)
+
+    info_row_2 = st.columns(2)
+    row_index = 0
+    if not pd.isna(protein_info["Molecular function"]):
+        info_row_2[row_index].markdown(rf"Molecular function <br> <div class='gc-info-box'>{protein_info['Molecular function']}</div>",
+                                       unsafe_allow_html=True)
+        row_index += 1
+    if not pd.isna(protein_info["Disease involvement"]):
+        info_row_2[row_index].markdown(rf"Protein classes <br> <div class='gc-info-box'>{protein_info['Disease involvement']}</div>",
+                               unsafe_allow_html=True)
+
+    cell_tpm = load_protein_tpm(protein_info, by="cell")
+    tissue_tpm = load_protein_tpm(protein_info, by="tissue")
+
+    if cell_tpm is not None:
+        cell_chart = alt.Chart(cell_tpm).mark_bar(color="steelblue").encode(
+            x=alt.X('cell:N', sort="-y", title="Cell Type"),
+            y=alt.Y('TPM:Q'),
+        ).properties(title="RNA expression (TPM) by cell type")
+        st.altair_chart(cell_chart, use_container_width=True)
+
+    if tissue_tpm is not None:
+        tissue_chart = alt.Chart(tissue_tpm).mark_bar(color="orange").encode(
+            x=alt.X('tissue:N', sort="-y", title="Tissue Type"),
+            y=alt.Y('TPM:Q'),
+        ).properties(title="RNA expression (TPM) by tissue type")
+        st.altair_chart(tissue_chart, use_container_width=True)
 
     seq = load_protein_sequence(uniprot_id)
     seq = re.sub(r"(\w{10})", r"\1 ", seq)
@@ -99,7 +147,7 @@ def render_py3DMol(molecule: str, string_format: str = "pdb") -> py3Dmol.view:
     visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                       format_func=lambda x: f"{x.title()} model")
 
-    viewer_dimensions = {"height": 600}
+    viewer_dimensions = {"height": 500}
 
     viewer = py3Dmol.view(**viewer_dimensions)
 
@@ -188,9 +236,9 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
         structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
-                                          x: f"{x} - Sequence Match: {matched_structures[x]['score'] * 100:.2f}%")
+                                          x: f"{x} - Score: {matched_structures[x]['score'] * 100:.2f}%")
         viewer = render_py3DMol(structures[structure_selector]["structure"])
-        st.button("Reset view", on_click=lambda: reset_view(viewer))
+        st.columns(3)[1].button("Reset view", on_click=lambda: reset_view(viewer))
     else:
         st.write(f"No structure found for UniProt ID {uniprot_id}")
 

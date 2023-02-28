@@ -1,3 +1,4 @@
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -47,6 +48,8 @@ def main():
 
     st.set_page_config(**site_configuration)
     st.markdown(site_style, unsafe_allow_html=True)
+
+    alt.themes.enable("urbaninstitute")
 
     st.title("GCapricorn")
 
