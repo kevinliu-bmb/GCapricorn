@@ -21,7 +21,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     gene_details = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
         x=alt.X("start_position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         color=alt.Color("Protein class:N"),
-        tooltip=["Gene", "start_position", "end_position", "Protein class"]
+        tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "start_position", "end_position"]
     )
 
     detailed_view = (top_line + gene_details).properties(
