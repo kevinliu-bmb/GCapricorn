@@ -18,10 +18,21 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         tooltip=["Gene", "Start Position", "End Position"]
     )
 
-    gene_details = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
+    # gene_details = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
+    #     x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
+    #     color=alt.Color("Primary Protein Class:N"),
+    #     tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"]
+    # )
+
+    gene_details = alt.Chart(chromosome_proteins).mark_square(size=500).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
-        color=alt.Color("Primary Protein Class:N"),
-        tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"]
+        x2=alt.X2("End Position:Q"),
+        tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"],
+        color=alt.Color("Primary Protein Class:N")
+    ) + alt.Chart(chromosome_proteins).mark_text(align="center", baseline="middle", dx=7).encode(
+        x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
+        x2=alt.X2("End Position:Q"),
+        text="Gene"
     )
 
     detailed_view = (top_line + gene_details).properties(
