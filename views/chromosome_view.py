@@ -2,12 +2,6 @@ import pandas as pd
 import streamlit as st
 import altair as alt
 
-# TODO: Add all available protein protein_classes, sorted by priority.
-# The class with the highest priority will be the one chosen for the protein as its class.
-protein_class_priority = [
-    "Enzymes",
-    "Transporters"
-]
 
 @st.cache_data
 def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
@@ -55,21 +49,6 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     return detailed_view & general_view
 
 
-def get_primary_protein_class(protein_classes: str, protein_selection: list[str]) -> str:
-    """
-    Retrieve the primary protein class from a comma-separated string of protein classes.
-    :param protein_classes: Protein classes in a comma-separated format.
-    :param protein_selection: list of selected protein classes to filter by.
-    :return: The primary protein class as a string.
-    """
-    class_list = [x.strip() for x in protein_classes.split(",")]
-    prioritized_protein_classes = [x for x in protein_class_priority if x in class_list]
-    prioritized_protein_classes = list(filter(lambda x: x in protein_selection, prioritized_protein_classes))
-    if prioritized_protein_classes:
-        return prioritized_protein_classes[0]
-    return class_list[0]
-
-
 def generate_chromosome_view() -> None:
     """
     Generates the chromosome view.
@@ -100,8 +79,8 @@ def generate_chromosome_view() -> None:
     chromosome_proteins["Start Position"] = chromosome_proteins["Position"].str.split("-", expand=True)[0]
     chromosome_proteins["End Position"] = chromosome_proteins["Position"].str.split("-", expand=True)[1]
 
-    chromosome_proteins["Primary Protein Class"] = chromosome_proteins["Protein class"].apply(
-        lambda x: get_primary_protein_class(x, protein_selection)
+    chromosome_proteins["Primary Protein Class"] = chromosome_proteins["Prioritized Protein Class"].apply(
+        lambda x: x[0]
     )
 
     chart = build_chromosome_chart(chromosome_proteins)

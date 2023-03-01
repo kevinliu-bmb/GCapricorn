@@ -13,6 +13,13 @@ site_configuration = {
     "layout": "wide"
 }
 
+# TODO: Add all available protein protein_classes, sorted by priority.
+# The class with the highest priority will be the one chosen for the protein as its class.
+protein_class_priority = [
+    "Enzymes",
+    "Transporters"
+]
+
 with open("stylesheet.css") as stylesheet:
     site_style = f"<style>{stylesheet.read()}</style>"
 
@@ -31,6 +38,24 @@ def generate_prognostic_data(row: pd.Series, prognostic_type: str) -> str:
     return ",".join(map(lambda x: x.split("-")[1].strip(), prognostics))
 
 
+def prioritize_protein_class(protein_classes: str, priority_list: list[str] = None) -> list[str]:
+    """
+    Get a list of prioritized protein classes from a comma-separated string of protein classes.
+    :param protein_classes: Protein classes in a comma-separated format.
+    :param priority_list: list of prioritized protein classes.
+    :return: The primary protein class as a string.
+    """
+
+    if priority_list is None:
+        priority_list = protein_class_priority
+
+    class_list = [x.strip() for x in protein_classes.split(",")]
+    prioritized_protein_classes = [x for x in priority_list if x in class_list]
+    if prioritized_protein_classes:
+        return prioritized_protein_classes
+    return class_list
+
+
 @st.cache_data
 def load_data() -> pd.DataFrame:
     """
@@ -41,6 +66,7 @@ def load_data() -> pd.DataFrame:
     data["Favorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="favorable"), axis=1)
     data["Unfavorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="unfavorable"), axis=1)
     data.dropna(subset=["Uniprot"], inplace=True)
+    data["Prioritized Protein Class"] = data["Protein class"].apply(prioritize_protein_class)
     return data
 
 
