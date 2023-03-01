@@ -91,7 +91,7 @@ def generate_chromosome_view() -> None:
     chromosome_proteins["End Position"] = chromosome_proteins["Position"].str.split("-", expand=True)[1]
 
     chromosome_proteins["Primary Protein Class"] = chromosome_proteins["Prioritized Protein Class"].apply(
-        lambda x: list(filter(lambda y: y in protein_selection, x))[0]
+        lambda x: x[0] if list(filter(lambda y: y in protein_selection, x)) == [] else list(filter(lambda y: y in protein_selection, x))[0]
     )
 
     chart = build_chromosome_chart(chromosome_proteins)
