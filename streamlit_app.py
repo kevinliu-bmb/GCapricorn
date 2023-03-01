@@ -13,11 +13,32 @@ site_configuration = {
     "layout": "wide"
 }
 
-# TODO: Add all available protein protein_classes, sorted by priority.
-# The class with the highest priority will be the one chosen for the protein as its class.
 protein_class_priority = [
     "Enzymes",
-    "Transporters"
+    "Transporters",
+    "Transcription factors",
+    "Plasma proteins",
+    "Metabolic proteins",
+    "G-protein coupled receptors",
+    "Predicted intracellular proteins",
+    "Predicted membrane proteins",
+    "Predicted secreted proteins",
+    "Voltage-gated ion channels",
+    "Nuclear receptors",
+    "Disease related genes",
+    "Human disease related genes",
+    "Cancer-related genes",
+    "Potential drug targets",
+    "FDA approved drug targets",
+    "RAS pathway related proteins",
+    "CD markers",
+    "Candidate cardiovascular disease genes",
+    "Blood group antigen proteins",
+    "RNA polymerase related proteins",
+    "Immunoglobulin genes",
+    "T-cell receptor genes",
+    "Ribosomal proteins",
+    "Citric acid cycle related proteins"
 ]
 
 with open("stylesheet.css") as stylesheet:
