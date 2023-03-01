@@ -4,28 +4,25 @@ import streamlit as st
 
 def generate_cancer_view() -> None:
     st.header("HPA Cancer Statistics")
-
-    df = st.session_state["data"]
-    df = df.rename(columns={'Unfavorable prognostics': 'cancer'})
-    df = df.rename(columns={'Protein class': 'p_class'})
-
-    df.cancer = df.cancer.str.split(',')
-    df2 = df.explode('cancer')
-
-    df2.p_class = df.p_class.str.split(',')
-    df2 = df2.explode('p_class')
     
-    cancersls = df2["cancer"].unique().tolist()
-    cancer_dropdown = alt.binding_select(options=cancersls)
-    cancer_select = alt.selection_single(fields = ['cancer'], on = 'click', bind=cancer_dropdown, name='Cancer Type')
+    df = st.session_state["data"]
+    cancer_selection = st.session_state["cancer_selection"]
 
-    protclasses = df2["p_class"].unique().tolist()
-    proteinselect = st.multiselect('Protein Classes', options=protclasses)
+    df["Unfavorable prognostics"] = df["Unfavorable prognostics"].apply(lambda x: [item.strip() for item in x.split(",")])
+    #df2 = df.explode("Unfavorable prognostics")
+    df2 = df[df["Unfavorable prognostics"].apply(lambda x: cancer_selection in x)]
 
-    chart = alt.Chart(df2).mark_bar().encode(
-        x=alt.X('Chromosome:O', sort = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "MT", "X", "Y", "Unmapped"]),
-        y=alt.Y('count(Gene):Q'),
-        color=alt.Color('p_class:N'),
-        column = alt.Column('p_class')).add_selection(cancer_select).transform_filter(cancer_select)
+    df2["Protein class"] = df["Protein class"].apply(lambda x: [item.strip() for item in x.split(",")])
+    df2 = df2.explode("Protein class")
+    
+    protein_selection = st.session_state["protein_selection"]
+    df3 = df2[df2["Protein class"].isin(protein_selection)]
 
-    st.altair_chart(chart, use_container_width=True)
+    chart = alt.Chart(df3).mark_bar().encode(
+        x=alt.X('Protein class:N', title=None, axis=alt.Axis(tickCount=26, grid=False, labels=False)),
+        y=alt.Y('count(Gene):Q', title= "Gene Count"),
+        color=alt.Color('Protein class:N'), 
+        column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["MT", "X", "Y", "Unmapped"], spacing=0,
+                          header=alt.Header(titleOrient='bottom', labelOrient='bottom'))).properties(width=20).configure_range(category={'scheme': 'dark2'})
+        
+    st.altair_chart(chart, use_container_width=False)
