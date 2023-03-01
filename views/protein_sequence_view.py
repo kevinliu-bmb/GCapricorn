@@ -90,7 +90,7 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
         color="black",
         font="monospace"
     ).encode(
-        x=alt.X("position", type="quantitative", title="Residue number",
+        x=alt.X("position:Q", title="Residue number",
                 bin=alt.Bin(step=1), scale=alt.Scale(domain=interval.ref())),
         text="show_text:N",
         tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")],
@@ -100,14 +100,14 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     )
 
     sequence_colors = alt.Chart(sequence_table).mark_rect().encode(
-        x=alt.X("position", type="quantitative", title="Residue number",
+        x=alt.X("position:Q", title="Residue number",
                 bin=alt.Bin(step=1), scale=alt.Scale(domain=interval.ref())),
         color=alt.Color("color", type="nominal", scale=None),
         tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")]
     )
 
     position_selector = alt.Chart(sequence_table).mark_line().encode(
-        x=alt.X("position", type="quantitative", title="Drag to select", scale=alt.Scale(domain=(1, len(seq) + 1)))
+        x=alt.X("position:Q", title="Drag to select", scale=alt.Scale(domain=(1, len(seq) + 1)))
     ).properties(
         width=800,
         height=50

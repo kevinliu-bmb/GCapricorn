@@ -14,13 +14,13 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "True" in the tooltip.
 
     top_line = alt.Chart(chromosome_proteins).mark_line().encode(
-        x=alt.X("start_position", type="quantitative", scale=alt.Scale(domain=brush.ref())),
+        x=alt.X("start_position:Q", scale=alt.Scale(domain=brush.ref())),
         tooltip=["Gene", "start_position", "end_position"]
     )
 
     gene_details = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
-        x=alt.X("start_position", type="quantitative", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
-        color="Protein class:N",
+        x=alt.X("start_position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
+        color=alt.Color("Protein class:N"),
         tooltip=["Gene", "start_position", "end_position", "Protein class"]
     )
 
@@ -30,13 +30,13 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     )
 
     bottom_line = alt.Chart(chromosome_proteins).mark_line().encode(
-        x="start_position:Q",
+        x=alt.X("start_position:Q"),
         tooltip=["Gene", "start_position", "end_position"]
     )
 
     gene_overview = alt.Chart(chromosome_proteins).mark_rect(size=10).encode(
-        x=alt.X("start_position", type="quantitative", title="Drag to zoom"),
-        x2="end_position:Q",
+        x=alt.X("start_position:Q", title="Drag to select chromosomal region, scroll to zoom in/out"),
+        x2=alt.X2("end_position:Q"),
         tooltip=["Gene", "start_position", "end_position"],
         color=alt.Color("Protein class:N") # TODO: color by selected protein classes; BUG: not displaying the simplified selected protein classes.
     )
