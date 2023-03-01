@@ -78,5 +78,8 @@ def generate_chromosome_view() -> None:
     chromosome_proteins["start_position"] = chromosome_proteins["Position"].str.split("-", expand=True)[0]
     chromosome_proteins["end_position"] = chromosome_proteins["Position"].str.split("-", expand=True)[1]
 
+    chromosome_proteins["Protein class"] = chromosome_proteins["Protein class"].str.split(", ")
+    chromosome_proteins = chromosome_proteins["Protein class"].explode()
+
     chart = build_chromosome_chart(chromosome_proteins)
     st.altair_chart(chart, use_container_width=True)
