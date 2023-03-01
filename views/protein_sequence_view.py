@@ -106,7 +106,7 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
         tooltip=[alt.Tooltip("amino_acid_name", title="Amino acid"), alt.Tooltip("position", title="Position")]
     )
 
-    position_selector = alt.Chart(sequence_table).mark_line().encode(
+    position_selector = alt.Chart(sequence_table).mark_line(color="black", width=1).encode(
         x=alt.X("position:Q", title="Drag to select subset of amino acid sequence, scroll to zoom in/out", scale=alt.Scale(domain=(1, len(seq) + 1)))
     ).properties(
         width=600,
