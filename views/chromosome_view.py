@@ -17,7 +17,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     :return: None.
     """
 
-    brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "True" in the tooltip.
+    brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "true" in the tooltip.
 
     top_line = alt.Chart(chromosome_proteins).mark_line().encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref())),
@@ -31,7 +31,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     )
 
     detailed_view = (top_line + gene_details).properties(
-        width=600,
+        width=500,
         height=150
     )
 
@@ -44,11 +44,11 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", title="Drag to select chromosomal region, scroll to zoom in/out"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Start Position", "End Position"],
-        color=alt.Color("Primary Protein Class:N") # TODO: color by selected protein protein_classes; BUG: not displaying the simplified selected protein protein_classes.
+        color=alt.Color("Primary Protein Class:N")
     )
 
     general_view = (bottom_line + gene_overview).properties(
-        width=600,
+        width=500,
         height=50,
     ).add_selection(brush)
 
