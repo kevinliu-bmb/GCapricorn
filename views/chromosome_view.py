@@ -11,7 +11,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     :return: None.
     """
 
-    brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "true" in the tooltip.
+    brush = alt.selection(type="interval", encodings=["x"]) # FIXME: when hovering over brushed region, displays "true" in the tooltip.
 
     top_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref())),
@@ -22,7 +22,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     gene_boxes = alt.Chart(chromosome_proteins).mark_square(size=500).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
-        tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"],
+        tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Start Position", "End Position"],
         color=alt.Color("Primary Protein Class:N")
     )
     
