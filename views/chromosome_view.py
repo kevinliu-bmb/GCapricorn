@@ -95,8 +95,8 @@ def generate_chromosome_view() -> None:
             lambda x: any(protein_class in x for protein_class in protein_selection)
         )]
 
-    chromosome_proteins["Start Position"] = chromosome_proteins["Position"].str.split("-", expand=True)[0] # BUG: raises key error with certain cancer type and protein class selection combinations.
-    chromosome_proteins["End Position"] = chromosome_proteins["Position"].str.split("-", expand=True)[1]
+    chromosome_proteins["Start Position"] = chromosome_proteins["Position"].apply(lambda x: x.split('-')[0].strip())
+    chromosome_proteins["End Position"] = chromosome_proteins["Position"].apply(lambda x: x.split('-')[0].strip())
 
     chromosome_proteins["Primary Protein Class"] = chromosome_proteins["Prioritized Protein Class"].apply(
         lambda x: x[0] if list(filter(lambda y: y in protein_selection, x)) == [] else list(filter(lambda y: y in protein_selection, x))[0]
