@@ -23,6 +23,8 @@ def generate_cancer_view() -> None:
         y=alt.Y('count(Gene):Q', title= "Gene Count"),
         color=alt.Color('Protein class:N'), 
         column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["MT", "X", "Y", "Unmapped"], spacing=0,
-                          header=alt.Header(titleOrient='bottom', labelOrient='bottom'))).properties(width=27).configure_range(category={'scheme': 'dark2'})
-        
+                          header=alt.Header(titleOrient='bottom', labelOrient='bottom'))).properties(width=27)
+
+    chart = chart.configure_legend(orient='bottom')
+
     st.altair_chart(chart, use_container_width=False)

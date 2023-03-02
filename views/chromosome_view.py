@@ -13,16 +13,11 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
 
     brush = alt.selection(type="interval", encodings=["x"]) # BUG: when hovering over brushed region, displays "true" in the tooltip.
 
-    top_line = alt.Chart(chromosome_proteins).mark_line().encode(
+    top_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref())),
-        tooltip=["Gene", "Start Position", "End Position"]
+        tooltip=["Gene", "Start Position", "End Position"],
+        color=alt.value("black")
     )
-
-    # gene_details = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
-    #     x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
-    #     color=alt.Color("Primary Protein Class:N"),
-    #     tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"]
-    # )
 
     gene_boxes = alt.Chart(chromosome_proteins).mark_square(size=500).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
@@ -31,25 +26,35 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         color=alt.Color("Primary Protein Class:N")
     )
     
-    gene_box_names = alt.Chart(chromosome_proteins).mark_text(align="center", baseline="middle", dx=7).encode(
+    gene_box_names = alt.Chart(chromosome_proteins).mark_text(
+        align="center", 
+        baseline="middle", 
+        fontWeight="bold",
+        font="monospace",
+        dy=-20,
+        dx=-30
+    ).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
-        text="Gene"
+        text="Gene",
+        color=alt.Color("Primary Protein Class:N"),
+        angle=alt.value(45)
     )
 
-    gene_details = (gene_boxes + gene_box_names)
+    gene_details = gene_boxes + gene_box_names
 
     detailed_view = (top_line + gene_details).properties(
         width=500,
         height=150
     )
 
-    bottom_line = alt.Chart(chromosome_proteins).mark_line().encode(
+    bottom_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
         x=alt.X("Start Position:Q"),
-        tooltip=["Gene", "Start Position", "End Position"]
+        tooltip=["Gene", "Start Position", "End Position"],
+        color=alt.value("black")
     )
 
-    gene_overview = alt.Chart(chromosome_proteins).mark_rect(size=10).encode(
+    gene_overview = alt.Chart(chromosome_proteins).mark_circle(size=50).encode(
         x=alt.X("Start Position:Q", title="Drag to select chromosomal region, scroll to zoom in/out"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Start Position", "End Position"],
@@ -71,7 +76,6 @@ def generate_chromosome_view() -> None:
     """
 
     st.header("Chromosome View")
-
     data = st.session_state["data"]
 
     cancer_selection = st.session_state["cancer_selection"]

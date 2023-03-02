@@ -109,7 +109,7 @@ def main():
     protein_classes = list(set(protein_classes))
 
     left, right = st.columns(2)
-    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes, default=["Enzymes"])
+    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes, default=["Enzymes", "Transporters", "Transcription factors"])
     st.session_state["protein_selection"] = protein_selection
     cancer_types = map(lambda x: x.split("-")[1].strip(),
                        filter(lambda x: "Pathology prognostics" in x, data.columns))
