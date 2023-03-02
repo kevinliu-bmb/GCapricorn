@@ -18,12 +18,12 @@ protein_class_priority = [
     "Transporters",
     "Transcription factors",
     "Plasma proteins",
+    "Ribosomal proteins",
     "Metabolic proteins",
     "G-protein coupled receptors",
-    "Predicted intracellular proteins",
-    "Predicted membrane proteins",
-    "Predicted secreted proteins",
     "Voltage-gated ion channels",
+    "Immunoglobulin genes",
+    "T-cell receptor genes",
     "Nuclear receptors",
     "Disease related genes",
     "Human disease related genes",
@@ -35,10 +35,10 @@ protein_class_priority = [
     "Candidate cardiovascular disease genes",
     "Blood group antigen proteins",
     "RNA polymerase related proteins",
-    "Immunoglobulin genes",
-    "T-cell receptor genes",
-    "Ribosomal proteins",
-    "Citric acid cycle related proteins"
+    "Citric acid cycle related proteins",
+    "Predicted intracellular proteins",
+    "Predicted membrane proteins",
+    "Predicted secreted proteins"
 ]
 
 with open("stylesheet.css") as stylesheet:

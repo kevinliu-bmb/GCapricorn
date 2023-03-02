@@ -24,16 +24,20 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     #     tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"]
     # )
 
-    gene_details = alt.Chart(chromosome_proteins).mark_square(size=500).encode(
+    gene_boxes = alt.Chart(chromosome_proteins).mark_square(size=500).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Gene synonym", "Protein class", "Ensembl", "Uniprot", "Biological process", "Start Position", "End Position"],
         color=alt.Color("Primary Protein Class:N")
-    ) + alt.Chart(chromosome_proteins).mark_text(align="center", baseline="middle", dx=7).encode(
+    )
+    
+    gene_box_names = alt.Chart(chromosome_proteins).mark_text(align="center", baseline="middle", dx=7).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
         text="Gene"
     )
+
+    gene_details = (gene_boxes + gene_box_names)
 
     detailed_view = (top_line + gene_details).properties(
         width=500,
