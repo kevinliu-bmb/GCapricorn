@@ -152,7 +152,7 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
     if len(matched_structures) > 0:
         select, style, view = st.columns([2, 3, 8])
         with select:
-            structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
+            structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id} \n \n Structure by sequence match %",
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
                                           x: f"{x} - {matched_structures[x]['score'] * 100:.2f}%")
