@@ -88,7 +88,7 @@ def generate_chromosome_view() -> None:
     chromosome_data = data[data["Chromosome"] == chromosome_select]
 
     if not protein_selection:
-        st.warning("No protein protein_classes selected. Displaying all proteins in the chromosome.")
+        st.warning("No protein classes selected. Displaying all proteins in the chromosome.")
         chromosome_proteins = chromosome_data
     else:
         chromosome_proteins = chromosome_data[chromosome_data["Protein class"].apply(
