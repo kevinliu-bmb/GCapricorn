@@ -155,7 +155,7 @@ def generate_protein_structure_view(uniprot_id: str) -> None:
             structure_selector = st.radio(f"Found {len(matched_structures)} sequence matches for UniProt ID {uniprot_id}",
                                       options=matched_structures.keys(), horizontal=True,
                                       format_func=lambda
-                                          x: f"{x} - Score: {matched_structures[x]['score'] * 100:.2f}%")
+                                          x: f"{x} - {matched_structures[x]['score'] * 100:.2f}%")
         with style:
             visualization_type = st.selectbox("Structure View", options=["cartoon", "stick", "sphere"],
                                           format_func=lambda x: f"{x.title()} model")

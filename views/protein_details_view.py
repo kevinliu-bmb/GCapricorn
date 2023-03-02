@@ -54,14 +54,31 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
 
     info_row_2 = st.columns(2)
     row_index = 0
-    if not pd.isna(protein_info["Molecular function"]):
+    if not pd.isna(protein_info["Gene synonym"]):
         info_row_2[row_index].markdown(
+            rf"Gene synonyms <br> <div class='gc-info-box'>{protein_info['Gene synonym']}</div>",
+            unsafe_allow_html=True)
+        row_index += 1
+    if not pd.isna(protein_info["Biological process"]):
+        biological_processes = [f"<li>{process.strip()}</li>" for process in
+                                protein_info["Biological process"].split(",")]
+        info_row_2[row_index].markdown(
+            rf"Biological process <br> <div class='gc-info-box'><ul>{''.join(biological_processes)}</ul></div>",
+            unsafe_allow_html=True)
+
+
+    info_row_3 = st.columns(2)
+    row_index = 0
+    if not pd.isna(protein_info["Molecular function"]):
+        info_row_3[row_index].markdown(
             rf"Molecular function <br> <div class='gc-info-box'>{protein_info['Molecular function']}</div>",
             unsafe_allow_html=True)
         row_index += 1
     if not pd.isna(protein_info["Disease involvement"]):
-        info_row_2[row_index].markdown(
-            rf"Protein classes <br> <div class='gc-info-box'>{protein_info['Disease involvement']}</div>",
+        diseases = [f"<li>{process.strip()}</li>" for process in
+                                protein_info["Disease involvement"].split(",")]
+        info_row_3[row_index].markdown(
+            rf"Disease involvement <br> <div class='gc-info-box'><ul>{''.join(diseases)}</ul></div>",
             unsafe_allow_html=True)
 
     cell_tpm = load_protein_tpm(protein_info, by="cell")

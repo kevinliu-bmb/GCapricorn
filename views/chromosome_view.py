@@ -84,7 +84,8 @@ def generate_chromosome_view() -> None:
 
     protein_selection = st.session_state["protein_selection"]
 
-    chromosome_select = st.selectbox(label="Selerct available chromosomes", options=data["Chromosome"].unique(), index=0)
+
+    chromosome_select = st.selectbox(label="Select available chromosomes", options=data["Chromosome"].unique(), index=0)
     chromosome_data = data[data["Chromosome"] == chromosome_select]
 
     if not protein_selection:
