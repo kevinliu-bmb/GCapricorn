@@ -10,8 +10,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     :param chromosome_proteins: DataFrame containing chromosome/protein information.
     :return: A Chart object ready to be displayed.
     """
-
-    brush = alt.selection(type="interval", encodings=["x"]) # FIXME: when hovering over brushed region, displays "true" in the tooltip.
+    brush = alt.selection(type="interval", encodings=["x"])
 
     top_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref())),
