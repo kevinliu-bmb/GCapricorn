@@ -130,7 +130,7 @@ def main():
 
     with view2:
         generate_chromosome_view()
-
+    
     with view3:
         generate_protein_view()
 
