@@ -14,6 +14,9 @@ Team Runtime Terror
 * Michelle Theodory ([@mtheodory](https://github.com/mtheodory))
 
 ## Project Description
+
+# TO BE UPDATED
+
 ### View 1
 
 View 1 will show a broad-level overview of all available cancer types, protein types, and associated characteristics. We will allow the user to select and filter a cancer type of interest or allow all cancer types with a drop-down menu. The main visualization is a grouped bar chart of protein classes per chromosome based on the Human Protein Atlas database [1], allowing the user to select one or multiple classes of proteins to display on the grouped bar chart. This will be done with a tooltip selector that filters by protein class. This view will also include a mouseover tooltip that allows a user to see specific protein count per protein class, by chromosome.
