@@ -76,13 +76,11 @@ def generate_chromosome_view() -> None:
 
     st.header("Chromosome View")
     data = st.session_state["data"]
-
-    cancer_selection = st.session_state["cancer_selection"]
-    data = data[(data["Unfavorable prognostics"].apply(lambda x: cancer_selection in x)) |
-                (data["Favorable prognostics"].apply(lambda x: cancer_selection in x))]
-
     protein_selection = st.session_state["protein_selection"]
-
+    cancer_selection = st.session_state["cancer_selection"]
+    prognosis_selection = st.session_state["prognosis_selection"]
+    
+    data = data[(data[f"{prognosis_selection} prognostics"].apply(lambda x: cancer_selection in x))]
 
     chromosome_select = st.selectbox(label="Select available chromosomes", options=data["Chromosome"].unique(), index=0)
     chromosome_data = data[data["Chromosome"] == chromosome_select]

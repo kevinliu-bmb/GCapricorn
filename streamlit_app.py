@@ -111,14 +111,17 @@ def main():
     protein_classes = [item for sublist in protein_classes for item in sublist]
     protein_classes = list(set(protein_classes))
 
-    left, right = st.columns(2)
-    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes,
+    left, middle, right = st.columns(3)
+    protein_selection = middle.multiselect(label="Select Protein Classes", options=protein_classes,
                                           default=["Enzymes", "Transporters", "Transcription factors"])
     st.session_state["protein_selection"] = protein_selection
     cancer_types = map(lambda x: x.split("-")[1].strip(),
                        filter(lambda x: "Pathology prognostics" in x, data.columns))
     cancer_selection = left.selectbox(label="Select Cancer Type", options=cancer_types, index=0)
     st.session_state["cancer_selection"] = cancer_selection
+
+    prognosis_selection = right.selectbox(label = "Select Prognosis", options = ["Favorable", "Unfavorable"])
+    st.session_state["prognosis_selection"] = prognosis_selection
 
     # Horizontal 2 + 1 layout
     top_panel = st.container()
