@@ -36,7 +36,7 @@ def generate_cancer_view() -> None:
                 sort = chromosomes),
         y=alt.Y('count(Gene):Q', axis= alt.Axis(title= "Gene Count", labelAngle = -90)),
         color=alt.Color('Protein class:N'),
-        column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X", "Y", "MT", "Unmapped"], spacing=0,
+        column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X", "Y", "MT", "Unmapped"], spacing=13,
                           header=alt.Header(titleOrient='bottom', labelOrient='bottom')),
         tooltip=["Chromosome", "Protein class", "count(Gene)"]
     ).properties(width=22).configure_legend(orient='bottom')
