@@ -87,15 +87,15 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
     bar_charts = []
     if cell_tpm is not None:
         cell_chart = alt.Chart(cell_tpm).mark_bar(color="steelblue").encode(
-            x=alt.X('cell:N', sort="-y", title="Cell Type"),
-            y=alt.Y('TPM:Q'),
+            x=alt.X("cell:N", sort="-y", title="Cell Type"),
+            y=alt.Y("TPM:Q"),
         ).properties(title="RNA expression (TPM) by cell type", width=(350 if tissue_tpm is not None else 700))
         bar_charts.append(cell_chart)
 
     if tissue_tpm is not None:
         tissue_chart = alt.Chart(tissue_tpm).mark_bar(color="orange").encode(
-            x=alt.X('tissue:N', sort="-y", title="Tissue Type"),
-            y=alt.Y('TPM:Q'),
+            x=alt.X("tissue:N", sort="-y", title="Tissue Type"),
+            y=alt.Y("TPM:Q"),
         ).properties(title="RNA expression (TPM) by tissue type", width=(350 if cell_tpm is not None else 700))
         bar_charts.append(tissue_chart)
 

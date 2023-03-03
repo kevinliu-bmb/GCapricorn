@@ -60,8 +60,8 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
     :param seq: The sequence to visualize.
     :return: An Altair Chart showing an interactive view of the sequence, allowing users to zoom and pan.
     """
-    sequence_table = pd.DataFrame({'amino_acid': list(seq),
-                                   'position': [x for x in range(len(seq))]})
+    sequence_table = pd.DataFrame({"amino_acid": list(seq),
+                                   "position": [x for x in range(len(seq))]})
     sequence_table["amino_acid_name"] = sequence_table["amino_acid"].apply(
         lambda x: amino_acid_info[amino_acid_info["one_letter_code"] == x]["full_name"].iloc[0]
     )
@@ -86,7 +86,7 @@ def generate_sequence_visualization(seq: str) -> alt.Chart:
         ) \
         : datum.empty_string"
     ).mark_text(
-        fontWeight='bold',
+        fontWeight="bold",
         color="black",
         font="monospace"
     ).encode(

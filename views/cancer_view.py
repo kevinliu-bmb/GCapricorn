@@ -9,8 +9,8 @@ def generate_cancer_view() -> None:
     cancer_selection = st.session_state["cancer_selection"]
 
     df["Unfavorable prognostics"] = df["Unfavorable prognostics"].apply(lambda x: [item.strip() for item in x.split(",")])
-    #df2 = df.explode("Unfavorable prognostics")
-    df2 = df[df["Unfavorable prognostics"].apply(lambda x: cancer_selection in x)]
+    df2 = df[(df["Unfavorable prognostics"].apply(lambda x: cancer_selection in x)) |
+                (df["Favorable prognostics"].apply(lambda x: cancer_selection in x))]
 
     df2["Protein class"] = df["Protein class"].apply(lambda x: [item.strip() for item in x.split(",")])
     df2 = df2.explode("Protein class")

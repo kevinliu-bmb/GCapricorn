@@ -8,7 +8,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     """
     Generates the chromosome Altair chart.
     :param chromosome_proteins: DataFrame containing chromosome/protein information.
-    :return: None.
+    :return: A Chart object ready to be displayed.
     """
 
     brush = alt.selection(type="interval", encodings=["x"]) # FIXME: when hovering over brushed region, displays "true" in the tooltip.

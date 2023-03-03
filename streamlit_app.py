@@ -13,6 +13,9 @@ site_configuration = {
     "layout": "wide"
 }
 
+# Prioritized list of protein classes.
+# Proteins that belong to multiple classes will have
+# their "primary protein class" be the one that appears closest to the top of the list.
 protein_class_priority = [
     "Enzymes",
     "Transporters",
@@ -109,7 +112,8 @@ def main():
     protein_classes = list(set(protein_classes))
 
     left, right = st.columns(2)
-    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes, default=["Enzymes", "Transporters", "Transcription factors"])
+    protein_selection = right.multiselect(label="Select Protein Classes", options=protein_classes,
+                                          default=["Enzymes", "Transporters", "Transcription factors"])
     st.session_state["protein_selection"] = protein_selection
     cancer_types = map(lambda x: x.split("-")[1].strip(),
                        filter(lambda x: "Pathology prognostics" in x, data.columns))
