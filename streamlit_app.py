@@ -44,6 +44,15 @@ protein_class_priority = [
     "Predicted secreted proteins"
 ]
 
+color_scale = {k: v for k, v in zip(protein_class_priority, 
+                      ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
+                        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
+                        '#bcbd22', '#17becf', '#2c3e50', '#8e44ad',
+                        '#2ecc71', '#e74c3c', '#2980b9', '#f1c40f',
+                        '#c0392b', '#9b59b6', '#1abc9c', '#7f8c8d',
+                        '#34495e', '#95a5a6', '#f39c12', '#d35400',
+                        '#c0392b'])}
+
 with open("stylesheet.css") as stylesheet:
     site_style = f"<style>{stylesheet.read()}</style>"
 
@@ -91,6 +100,8 @@ def load_data() -> pd.DataFrame:
     data["Unfavorable prognostics"] = data.apply(lambda row: generate_prognostic_data(row, prognostic_type="unfavorable"), axis=1)
     data.dropna(subset=["Uniprot"], inplace=True)
     data["Prioritized Protein Class"] = data["Protein class"].apply(prioritize_protein_class)
+    data.drop(data[(data["Chromosome"] == "MT") | (data["Chromosome"] == "Unmapped")].index, inplace=True)
+    
     return data
 
 
@@ -106,6 +117,8 @@ def main():
     data = load_data()
     st.session_state["unfiltered_data"] = data
     st.session_state["data"] = data
+
+    st.session_state["color_scale"] = color_scale
 
     protein_classes = [x.split(", ") for x in data["Protein class"]]
     protein_classes = [item for sublist in protein_classes for item in sublist]

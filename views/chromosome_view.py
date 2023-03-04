@@ -10,6 +10,9 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     :param chromosome_proteins: DataFrame containing chromosome/protein information.
     :return: A Chart object ready to be displayed.
     """
+    color_scale = st.session_state["color_scale"]
+    filtered_color_scale = {k: v for k, v in color_scale.items() if k in chromosome_proteins["Primary Protein Class"].unique()}
+
     brush = alt.selection(type="interval", encodings=["x"])
 
     top_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
@@ -22,7 +25,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Gene synonym", "Protein class", "Start Position", "End Position"],
-        color=alt.Color("Primary Protein Class:N")
+        color=alt.Color("Primary Protein Class:N", scale=alt.Scale(domain=list(filtered_color_scale.keys()), range=list(filtered_color_scale.values())))
     )
     
     gene_box_names = alt.Chart(chromosome_proteins).mark_text(
@@ -36,7 +39,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
         text="Gene",
-        color=alt.Color("Primary Protein Class:N"),
+        color=alt.Color("Primary Protein Class:N", scale=alt.Scale(domain=list(filtered_color_scale.keys()), range=list(filtered_color_scale.values()))),
         angle=alt.value(45)
     )
 
@@ -57,7 +60,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", title="Drag to select chromosomal region, scroll to zoom in/out"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Start Position", "End Position"],
-        color=alt.Color("Primary Protein Class:N")
+        color=alt.Color("Primary Protein Class:N", scale=alt.Scale(domain=list(filtered_color_scale.keys()), range=list(filtered_color_scale.values())))
     )
 
     general_view = (bottom_line + gene_overview).properties(
@@ -79,11 +82,11 @@ def generate_chromosome_view() -> None:
     protein_selection = st.session_state["protein_selection"]
     cancer_selection = st.session_state["cancer_selection"]
     prognosis_selection = st.session_state["prognosis_selection"]
-    
+
     data = data[(data[f"{prognosis_selection} prognostics"].apply(lambda x: cancer_selection in x))]
 
     chromosome_select = st.selectbox(label="Select available chromosomes",
-                                     options=[str(x) for x in range(1, 23)] + ["X", "Y", "MT", "Unmapped"], index=0)
+                                     options=[str(x) for x in range(1, 23)] + ["X", "Y"], index=0)
     chromosome_data = data[data["Chromosome"] == chromosome_select]
 
     if not protein_selection:
