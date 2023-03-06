@@ -32,14 +32,14 @@ def generate_cancer_view() -> None:
         )]
         filtered_color_scale = {k: v for k, v in color_scale.items() if k in df3["Protein class"].unique()}
    
-    chromosomes = [str(x) for x in range(1, 23)] + ["X", "Y"]
+    chromosomes = [str(x) for x in range(1, 23)] + ["X"]
 
     chart = alt.Chart(df3).mark_bar().encode(
         x=alt.X('Protein class:N', title=None, axis=alt.Axis(tickCount=26, grid=False, labels=False), 
                 sort = chromosomes),
         y=alt.Y('count(Gene):Q', axis= alt.Axis(title= "Gene Count")),
         color=alt.Color('Protein class:N', scale=alt.Scale(domain=list(filtered_color_scale.keys()), range=list(filtered_color_scale.values()))),
-        column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X", "Y"], spacing=13,
+        column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X"], spacing=13,
                           header=alt.Header(titleOrient='bottom', labelOrient='bottom')),
         tooltip=["Chromosome", "Protein class", "count(Gene)"]
     ).properties(width=16).configure_legend(orient='bottom')
