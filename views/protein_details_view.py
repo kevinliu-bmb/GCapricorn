@@ -37,7 +37,9 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
     """
 
     protein_info = data[data["Uniprot"] == uniprot_id]
-    assert len(protein_info) == 1
+    if len(protein_info) == 0:
+        st.write(f"No Uniprot found for ID {uniprot_id}")
+        return
     protein_info = protein_info.iloc[0]
 
     gene_col, chromosome_col, ensembl_col = st.columns([2, 1, 3])
