@@ -17,8 +17,6 @@ def generate_cancer_view() -> None:
     df2 = df2.explode("Protein class")
     
     protein_selection = st.session_state["protein_selection"]
-   
-    df3 = df2[df2["Protein class"].isin(protein_selection)]
 
     if not protein_selection:
         st.warning("No protein classes selected. Displaying only broad-level protein classes.")
@@ -34,6 +32,8 @@ def generate_cancer_view() -> None:
    
     chromosomes = [str(x) for x in range(1, 23)] + ["X"]
 
+    protein_legend_selector = alt.selection_multi(fields=["Protein class"], bind="legend")
+
     chart = alt.Chart(df3).mark_bar().encode(
         x=alt.X('Protein class:N', title=None, axis=alt.Axis(tickCount=26, grid=False, labels=False), 
                 sort = chromosomes),
@@ -41,7 +41,8 @@ def generate_cancer_view() -> None:
         color=alt.Color('Protein class:N', scale=alt.Scale(domain=list(filtered_color_scale.keys()), range=list(filtered_color_scale.values()))),
         column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X"], spacing=13,
                           header=alt.Header(titleOrient='bottom', labelOrient='bottom')),
+        opacity=alt.condition(protein_legend_selector, alt.value(1), alt.value(0.2)),
         tooltip=["Chromosome", "Protein class", "count(Gene)"]
-    ).properties(width=16).configure_legend(orient='bottom')
+    ).add_selection(protein_legend_selector).properties(width=16).configure_legend(orient='bottom')
 
     st.altair_chart(chart, use_container_width=False)
