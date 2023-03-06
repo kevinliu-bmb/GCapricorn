@@ -13,8 +13,8 @@ amino_acid_info = pd.DataFrame({
                           "Tyr", "Asn", "Cys", "Gln", "Ser", "Thr", "Asp",
                           "Glu", "Arg", "His", "Lys", "Gly", "Pro"],
     "full_name": ["Alanine", "Leucine", "Isoleucine", "Methionine", "Valine", "Phenylalanine", "Tryptophan",
-                  "Tyrosine", "Asparagine", "Cysteine", "Glutamine", "Serine", "Threonine", "Aspartic acid",
-                  "Glutamic acid", "Arginine", "Histidine", "Lysine", "Glycine", "Proline"],
+                  "Tyrosine", "Asparagine", "Cysteine", "Glutamine", "Serine", "Threonine", "Aspartate",
+                  "Glutamate", "Arginine", "Histidine", "Lysine", "Glycine", "Proline"],
     "color": ["#C8C8C8", "#0F820F", "#0F820F", "#E6E600", "#0F820F", "#3232AA", "#B45AB4",
               "#3232AA", "#00DCDC", "#E6E600", "#00DCDC", "#FA9600", "#FA9600", "#E60A0A",
               "#E60A0A", "#145AFF", "#8282D2", "#145AFF", "#EBEBEB", "#DC9682"]
