@@ -14,6 +14,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
     filtered_color_scale = {k: v for k, v in color_scale.items() if k in chromosome_proteins["Primary Protein Class"].unique()}
 
     brush = alt.selection(type="interval", encodings=["x"])
+    protein_legend_selector = alt.selection_single(fields=["Primary Protein Class"], bind="legend")
 
     top_line = alt.Chart(chromosome_proteins).mark_line(size=2).encode(
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref())),
@@ -25,9 +26,10 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", scale=alt.Scale(domain=brush.ref()), title="Chromosomal Position"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Gene synonym", "Protein class", "Start Position", "End Position"],
+        opacity=alt.condition(protein_legend_selector, alt.value(1), alt.value(0.2)),
         color=alt.Color("Primary Protein Class:N", scale=alt.Scale(domain=list(filtered_color_scale.keys()),
                                                                    range=list(filtered_color_scale.values())))
-    )
+    ).add_selection(protein_legend_selector)
     
     gene_box_names = alt.Chart(chromosome_proteins).mark_text(
         align="center", 
@@ -62,6 +64,7 @@ def build_chromosome_chart(chromosome_proteins: pd.DataFrame) -> alt.Chart:
         x=alt.X("Start Position:Q", title="Drag to select chromosomal region, scroll to zoom in/out"),
         x2=alt.X2("End Position:Q"),
         tooltip=["Gene", "Start Position", "End Position"],
+        opacity=alt.condition(protein_legend_selector, alt.value(1), alt.value(0.2)),
         color=alt.Color("Primary Protein Class:N", scale=alt.Scale(domain=list(filtered_color_scale.keys()),
                                                                    range=list(filtered_color_scale.values())))
     )
