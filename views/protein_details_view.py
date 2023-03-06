@@ -45,11 +45,13 @@ def generate_protein_details_view(uniprot_id: str, data: pd.DataFrame) -> None:
     chromosome_col.metric("Chromosome", protein_info["Chromosome"])
     ensembl_col.metric("Ensembl ID", protein_info["Ensembl"])
 
-    info_row_1 = st.columns(2)
+    info_row_1 = st.columns([2, 1, 3])
     info_row_1[0].markdown(rf"Gene description <br> <div class='gc-info-box'>{protein_info['Gene description']}</div>",
                            unsafe_allow_html=True)
+    info_row_1[1].markdown(rf"UniProt ID <br> <div class='gc-info-box'>{protein_info['Uniprot']}</div>",
+                           unsafe_allow_html=True)
     protein_classes = [f"<li>{protein_class.strip()}</li>" for protein_class in protein_info['Protein class'].split(",")]
-    info_row_1[1].markdown(f"Protein classes <br> <div class='gc-info-box'><ul>{''.join(protein_classes)}</ul></div>",
+    info_row_1[2].markdown(f"Protein classes <br> <div class='gc-info-box'><ul>{''.join(protein_classes)}</ul></div>",
                            unsafe_allow_html=True)
 
     info_row_2 = st.columns(2)

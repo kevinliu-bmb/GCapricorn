@@ -15,7 +15,9 @@ def generate_protein_view() -> None:
 
     st.header("Protein Details")
 
-    uniprot_id = st.selectbox("UniProt ID", options=data["Uniprot"].unique())
+
+    gene = st.selectbox("Gene name", options=data["Gene"].unique())
+    uniprot_id = data[data["Gene"] == gene].iloc[0]["Uniprot"]
 
     info_view, sequence_view = st.columns(2)
 
