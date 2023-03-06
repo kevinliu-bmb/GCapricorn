@@ -44,14 +44,15 @@ protein_class_priority = [
     "Predicted secreted proteins"
 ]
 
+#color hex codes retrieved from category10 color scheme
 color_scale = {k: v for k, v in zip(protein_class_priority, 
-                      ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728',
-                        '#9467bd', '#8c564b', '#e377c2', '#7f7f7f',
-                        '#bcbd22', '#17becf', '#2c3e50', '#8e44ad',
-                        '#2ecc71', '#e74c3c', '#2980b9', '#f1c40f',
-                        '#c0392b', '#9b59b6', '#1abc9c', '#7f8c8d',
-                        '#34495e', '#95a5a6', '#f39c12', '#d35400',
-                        '#c0392b'])}
+                      ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', 
+                       '#9467bd', '#8c564b', '#e377c2', '#7f7f7f', 
+                       '#bcbd22', '#17becf', '#aec7e8', '#ffbb78', 
+                       '#98df8a', '#ff9896', '#c5b0d5', '#c49c94', 
+                       '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5', 
+                       '#ad494a', '#8c6d31', '#bd9e39', '#e6550d', 
+                       '#6b6ecf', '#637939'])}
 
 with open("stylesheet.css") as stylesheet:
     site_style = f"<style>{stylesheet.read()}</style>"
