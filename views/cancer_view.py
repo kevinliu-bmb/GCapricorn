@@ -42,6 +42,6 @@ def generate_cancer_view() -> None:
         column=alt.Column('Chromosome:O', sort = [str(x) for x in range(1, 23)] + ["X", "Y"], spacing=13,
                           header=alt.Header(titleOrient='bottom', labelOrient='bottom')),
         tooltip=["Chromosome", "Protein class", "count(Gene)"]
-    ).properties(width=22).configure_legend(orient='bottom')
+    ).properties(width=16).configure_legend(orient='bottom')
 
     st.altair_chart(chart, use_container_width=False)
