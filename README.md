@@ -4,7 +4,7 @@
 
 GCapricorn is an app that enables biomedical researchers and clinicians to explore and enrich their knowledge of cancer-related genes and proteins from the clinical level to the protein and amino acid level, providing an intuitive and interactive experience to further their understanding of oncogenic genes and proteins.
 
-[Access GCapricorn](https://gcapricorn.streamlit.app/)
+[Access GCapricorn](https://gcapricorn-reborn.streamlit.app/)
 
 ## Team Members
 
