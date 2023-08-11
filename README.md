@@ -2,7 +2,7 @@
 
 *This data visualization project is completed for the BMI706 - Data Visualization for Biomedical Applications course.*
 
-GCapricorn is an app that enables biomedical researchers and clinicians to explore and enrich their knowledge of cancer-related genes and proteins from the clinical level to the protein and amino acid level, providing an intuitive and interactive experience to further their understanding of oncogenes and oncoproteins.
+GCapricorn is a Python-based web app that enables biomedical researchers and clinicians to explore and enrich their knowledge of cancer-related genes and proteins from the clinical level to the protein and amino acid level, providing an intuitive and interactive experience to further their understanding of oncogenes and oncoproteins.
 
 [Access GCapricorn](https://gcapricorn-reborn.streamlit.app/)
 
